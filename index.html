@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
+
+	<head profile="http://gmpg.org/xfn/11">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+		<title>Hacking Days 2013</title>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script type="text/javascript">
+		$(function() {
+			var ch = 0;
+			var item = 0;
+			var numItems = $('#caption li').length;
+			var time = 2000;
+			var delay = 30;
+			var wait = 3000
+			var showCaption = $('#showCaption')
+			var bomberman = $('#man');
+			var curBombermanSprite = 0;
+			var click = new Audio('click.wav');
+			var electricity = new Audio('electric_06.wav');
+
+			// read items into array for faster access
+		    var it = new Array();
+			for (i=0; i<numItems; i++) {
+				it[i] = $('#caption li:eq('+i+')').text();
+			}
+
+			// function definitons	
+
+			// time intervall between keystrokes (time=delay) and between lines (time=wait) 
+			function tickInterval() {
+				// for each item in the list (for each line)
+				if(item < numItems) {
+					// call the keystroke function for that line
+					var text = it[item];
+					type(text, (item==numItems-1));
+					text = null;
+					// set the timeout for the next function call
+					var tick = setTimeout(tickInterval, time);
+				} else {
+					// all lines are printed, so clear timer, we're done
+					clearTimeout(tick);
+				}
+			}
+			
+			function type(text, last) {
+				// set the timer for keystroke-delay
+				// -> 30msec + random value 0-250 msec to simulate "think pauses"
+				time = delay+Math.floor((Math.random()*250)+1);
+				// play keyclick sound ...
+				click.play();
+				// ... and show one more character of the line
+				showCaption.html(text.substr(0, ch++)+"_");
+				if(ch > text.length) {
+					// all characters shown, fade out and switch to next line, start with first character
+					// longer wait time between lines (3 seconds)
+					item++;
+					ch = 0;
+					time = wait;
+					// ah, this was the last line - don't fade
+					if (!last) {
+						showCaption.fadeOut(wait, function() {
+								showCaption.html(""); 
+								showCaption.show();
+						});
+					}
+				}	
+			}
+			
+			function animateBomberman() {
+				// we have five sprites to let him walk to the right
+				// select the next one, each time this function is calles (mod 5)
+				bomberman.attr('class', 'bomberman_r'+curBombermanSprite);
+				curBombermanSprite = (curBombermanSprite+1)%5;
+				
+				// move the div around the image a little bit to the right (by incrementing the left offset)
+				$('.bmanpos').animate({'left': '+=15px'}, '30');
+
+				// and again in 80 msecs
+				aniTick = setTimeout(animateBomberman, 80);
+			}
+
+			function startStuff() {
+				// start text & animation
+				tick = setTimeout(tickInterval, time);
+				aniTick = setTimeout(animateBomberman, 7500);
+			}
+
+			function turnOnLight(delays) {
+				if (delays.length == 0) {
+					console.log("starting");
+					startStuff();
+				} else {
+					$('#header').toggleClass('lcdGlow');
+					delay = delays[0];
+					setTimeout(function() {turnOnLight(delays.slice(1))}, delay);
+				}
+			}
+			// ok functions are defined, now let's start typing and walking ...
+
+			// fade in heading and text area
+			$('#container').fadeIn(2000, function() {
+					electricity.play();
+					turnOnLight([100,50,10,30,20,30,150,50,250, 20,200, 10,50,20,100])
+				});
+			$('#showCaption').css('width', ($('#caption').width() + 20));
+		});
+		</script>
+
+		<style type="text/css">
+
+		@font-face {
+		    font-family: 'coolfont';
+		    src: url('dotmatrix.ttf') format('truetype');
+		    font-weight: normal;
+		    font-style: normal;
+		}
+
+		body {
+			margin:0;
+			padding:0;
+			background: #000000;
+			color: #334F38;
+		}
+
+		.lcdGlow {
+			color: #8AEBB4;
+			text-shadow: 0 0 10px #20FA7F, 0 0 20px #20FA7F, 0 0 30px #20FA7F, 0 0 40px #57AD7C, 0 0 70px #57AD7C, 0 0 80px #57AD7C, 0 0 100px #57AD7C, 0 0 150px #57AD7C;
+		}
+		.lcdTextLarge {
+			font-family: coolfont, Arial, Sans-Serif;
+			font-size: 80px;
+			
+		}
+		.lcdTextSmall {
+			font-family: coolfont, Arial, Sans-Serif;
+			font-size: 50px;
+			color: #8AEBB4;
+			text-shadow: 0 0 10px #20FA7F, 0 0 20px #20FA7F, 0 0 30px #20FA7F, 0 0 40px #57AD7C, 0 0 70px #57AD7C, 0 0 80px #57AD7C, 0 0 100px #57AD7C, 0 0 150px #57AD7C;
+		}
+
+		#caption {
+			display: none;
+			width: 100%;
+		}
+
+		#container {
+			margin-top: 100px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 0;
+			width: 80%;
+			display: none;
+		}
+
+		#footer {
+			position: relative;
+			bottom: 20;
+			height:100px;
+			width:100%;
+			background-color: green;
+		}
+
+		.bmanpos {
+		  position:absolute;
+		  left:-20px;
+		  width:16px;
+		  height:25px;
+		  margin:5px;
+		  bottom:30px;
+		}
+
+		.bomberman_r0 {
+			background-image:url(sprite10.png);
+			background-position: 0px -8px; 
+			width: 16px;
+			height: 25px;
+		}
+
+		.bomberman_r1 {
+			background:url(sprite10.png);
+			background-position: -50px -8px; 
+			width: 16px;
+			height: 25px;
+		}
+
+		.bomberman_r2 {
+			background:url(sprite10.png);
+			background-position: -100px -8px; 
+			width: 16px;
+			height: 25px;
+		}
+
+		.bomberman_r3 {
+			background:url(sprite10.png);
+			background-position: -150px -8px; 
+			width: 16px;
+			height: 25px;
+		}
+
+		.bomberman_r4 {
+			background:url(sprite10.png);
+			background-position: -200px -8px; 
+			width: 16px;
+			height: 25px;
+		}
+
+		@media (max-device-width: 1024px) {
+			body {
+				margin:0;
+				padding:0;
+				background: #000000;
+				font-family: coolfont, Arial, Sans-Serif;
+				font-size: 40px;
+				color: #8AEBB4;
+			    text-shadow: 0px 0px 0px #57AD7C;
+			}
+		}
+
+		</style>
+	</head>
+
+
+	<body>
+		<div id="container">		
+			<h1 id="header" class="lcdTextLarge">Hacking Days 2013</h1>
+			<!-- h1 id="header" class="lcdTextLargeGlow">Hacking Days 2013</h1 -->
+			<ul id="caption">
+				<li>BomberMan retro gaming ...</li>
+				<li>cool frontends</li>
+				<li>HTML5 canvas</li>
+				<li>CSS</li>
+				<li>JavaFX 2</li>
+				<li>websockets</li>
+				<li>highly scalable middle tiers</li>
+				<li>vert.x</li>
+				<li>node.js</li>
+				<li>nosql key/value datastore</li>
+				<li>riak</li>
+				<li>fun!</li>
+				<li>even more fun!</li>
+			</ul>
+			<div id="showCaption" class="lcdTextSmall lcdGlow">_</div>
+		</div>
+		<div class="bmanpos">
+			<img id="man" class="bomberman_r1" src="spacer.gif" width="1" height="1" />
+		</div>
+	</body>
+</html>
