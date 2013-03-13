@@ -206,19 +206,21 @@
 			height: 25px;
 		}
 
-		@media (max-device-width: 1024px) {			
+		@media only screen and (max-device-width: 480px) {
 			.lcdGlow {
 				color: #8AEBB4;
+				text-shadow: 0 0 0px #8AEBB4;
 			}
 			.lcdTextLarge {
 				font-family: coolfont, Arial, Sans-Serif;
 				font-size: 50px;
-				
+				text-shadow: 0 0 0px #8AEBB4;				
 			}
 			.lcdTextSmall {
 				font-family: coolfont, Arial, Sans-Serif;
 				font-size: 30px;
 				color: #8AEBB4;
+				text-shadow: 0 0 0px #8AEBB4;
 			}
 		}
 
@@ -229,7 +231,6 @@
 	<body>
 		<div id="container">		
 			<h1 id="header" class="lcdTextLarge">Hacking Days 2013</h1>
-			<!-- h1 id="header" class="lcdTextLargeGlow">Hacking Days 2013</h1 -->
 			<ul id="caption">
 				<li>BomberMan retro gaming ...</li>
 				<li>cool frontends</li>
