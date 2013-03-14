@@ -3,7 +3,7 @@
 
 	<head profile="http://gmpg.org/xfn/11">
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
@@ -12,18 +12,6 @@
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 		<script type="text/javascript">
-
-		function hideAddressBar() {
-		    if (!window.location.hash) {
-		        if (document.height < window.outerHeight) {
-		            document.body.style.height = (window.outerHeight + 50) + 'px';
-		        }
-		        setTimeout(function(){ window.scrollTo(0, 1); }, 50 );
-		    }
-		}
-		window.addEventListener("load", function(){ if(!window.pageYOffset){ hideAddressBar(); } } );
-		window.addEventListener("orientationchange", hideAddressBar );
-
 
 		$(function() {
 
@@ -35,6 +23,7 @@
 			var wait = 3000
 			var showCaption = $('#showCaption')
 			var doneWithText = false;
+			var sound = true;
 
 			var bomberman = $('#man');
 			var curBombermanSprite = 0;
@@ -46,6 +35,27 @@
   		    	width  : $(window).width(),
     			height : $(window).height()
 			};
+
+			// popups open/close
+			$("#triggerPopupAccount").click(function(){
+				$('.bmanpos').fadeOut(500);
+				sound = false;
+				$("#container").fadeOut(500, function() {$("#popupAccount").fadeIn(500);});
+			});
+				 
+			$("#triggerCloseAccount").click(function(){
+				$("#popupAccount").fadeOut(500, function() {$("#container").fadeIn(500); $('.bmanpos').fadeIn(500); sound = true;});
+			});
+
+			$("#triggerPopupStory").click(function(){
+				$('.bmanpos').fadeOut(500);
+				sound = false;
+				$("#container").fadeOut(500, function() {$("#popupStory").fadeIn(500);});
+			});
+				 
+			$("#triggerCloseStory").click(function(){
+				$("#popupStory").fadeOut(500, function() {$("#container").fadeIn(500); $('.bmanpos').fadeIn(500); sound = true;});
+			});
 
 			// read items into array for faster access
 		    var it = new Array();
@@ -84,7 +94,9 @@
 				// -> 30msec + random value 0-250 msec to simulate "think pauses"
 				time = delay+Math.floor((Math.random()*250)+1);
 				// play keyclick sound ...
-				click.play();
+				if (sound) {
+					click.play();
+				}
 				// ... and show one more character of the line
 				showCaption.html(text.substr(0, ch++)+"_");
 				if(ch > text.length) {
@@ -143,13 +155,14 @@
 			}
 			// ok functions are defined, now let's start typing and walking ...
 
-			// fade in heading and text area
+			// fade in heading and text area, turn on light and start stuff
 			$('#container').fadeIn(2000, function() {
 					electricity.play();
 					turnOnLight([100,50,10,30,20,30,150,50,250, 20,200, 10,50,20,100])
 				});
 			$('#showCaption').css('width', ($('#caption').width() + 20));
-		});
+		});		 
+			
 		</script>
 
 		<style type="text/css">
@@ -268,6 +281,22 @@
 			text-shadow: 0 0 10px #20FA7F, 0 0 20px #20FA7F, 0 0 30px #20FA7F, 0 0 40px #57AD7C, 0 0 70px #57AD7C, 0 0 80px #57AD7C, 0 0 100px #57AD7C, 0 0 150px #57AD7C;
 		}
 
+		.overlay_form {
+			position: absolute;
+			border: 5px solid #8AEBB4;
+			padding: 10px;
+			background: #334F38;
+			color: #8AEBB4;
+			margin: 15%;
+			text-align: justify;
+		}
+
+		.overlay_form a:link, .overlay_form a:visited, .overlay_form a:active {
+			text-decoration:none;
+			font-weight: bold;
+			color: darkgray;
+		}
+
 		@media only screen and (max-device-width: 480px) {
 			#container {
 				margin-top: 0px;
@@ -276,7 +305,6 @@
 				margin-bottom: 0px;
 				width: 100%;
 				display: none;
-				height: 2000px;
 			}
 
 			.lcdGlow {
@@ -334,6 +362,11 @@
 				margin-left: 10px;
 			}
 
+			.overlay_form {
+				border: 2px solid #8AEBB4;
+				padding: 5px;
+				margin: 5%;
+			}
 		}
 
 		</style>
@@ -341,15 +374,28 @@
 
 
 	<body>
-		
+		<form id="popupAccount" class="overlay_form" style="display:none">
+			<p class="popupText">
+				Wer schon einen GitHub Account hat, bitte einfach <a href="mailto:hackingdays-host@senacor.com?Subject=Hier%20ist%20mein%20GitHub-Account%20für%20die%20Hacking%20Days">an die Hosts senden</a>&nbsp;- dann erfolgt sofort die Freischaltung. Ansonsten schnell <a href="http://github.com">einen Account beantragen</a>&nbsp;... dauert nur ein paar Sekunden.
+	    	</p>
+			<a href="#" id="triggerCloseAccount" >Close</a>
+		</form>
+		<form id="popupStory" class="overlay_form" style="display:none">
+			<p class="popupText">
+				Dieses Mal werden wir ein Spiel programmieren. Multi-Player, online und mit Anbindung in eine Datenbank. Als Client-Technologie stehen HTML5, CSS, JavaScript oder Java FX 2 zur Verfügung. Auf dem Server verwenden wir node.js (JavaScript) bzw. vert.x (Java, JavaScript, Groovy ... polyglott eben). Zwischen Client und Server werden wir mit WebSockets kommunizieren und Accounts und Highscores landen in einer NoSQL Datenbank (Riak). Da will noch jemand Responsive Web Design mit reinbringen? Ok ... merkt unsere HTML5 Client Anwendung, dass sie auf einem Smartphone läuft, wird kein Spielfeld, sondern ein Gamecontroller dargestellt!
+	    	</p>
+			<a href="#" id="triggerCloseStory" >Close</a>
+		</form>
 		<div id="container">	
 			<div class="navbar"> 
 				<ul>
-					<li><a href="https://github.com/senacor/Hacking-Days-2013/wiki">story</a></li>
+					<li><a id="triggerPopupStory" href="#">story</a></li>
 					<li><a href="https://github.com/senacor/Hacking-Days-2013">code</a></li>
+					<li><a id="triggerPopupAccount" href="#">account</a></li>
+					<li><a href="https://github.com/senacor/Hacking-Days-2013.git">clone</a></li>
 				</ul>
 			</div> 
-
+			
 			<h1 id="header" class="lcdTextLarge">Hacking Days 2013</h1>
 			<ul id="caption">
 				<li>BomberMan retro gaming ...</li>
@@ -368,6 +414,7 @@
 			</ul>
 			<div id="showCaption" class="lcdTextSmall lcdGlow">_</div>
 		</div>
+		
 		<div class="bmanpos">
 			<img id="man" class="bomberman_r1" src="spacer.gif" width="1" height="1" />
 		</div>
