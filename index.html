@@ -14,6 +14,7 @@
 		<script type="text/javascript">
 
 		$(function() {
+			var isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
 
 			var ch = 0;
 			var item = 0;
@@ -94,7 +95,7 @@
 				// -> 30msec + random value 0-250 msec to simulate "think pauses"
 				time = delay+Math.floor((Math.random()*250)+1);
 				// play keyclick sound ...
-				if (sound) {
+				if (sound && !isMobile) {
 					click.play();
 				}
 				// ... and show one more character of the line
@@ -157,7 +158,9 @@
 
 			// fade in heading and text area, turn on light and start stuff
 			$('#container').fadeIn(2000, function() {
-					electricity.play();
+					if (!isMobile) {
+						electricity.play();
+					}
 					turnOnLight([100,50,10,30,20,30,150,50,250, 20,200, 10,50,20,100])
 				});
 			$('#showCaption').css('width', ($('#caption').width() + 20));
