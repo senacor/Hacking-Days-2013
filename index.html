@@ -49,11 +49,14 @@
 			});
 
 			$("#triggerPopupCode").click(function(){
+				alert("code");
 				if (isMobile) {
+					alert("mobile");
 					$('.bmanpos').fadeOut(500);
 					sound = false;
 					$("#container").fadeOut(500, function() {$("#popupAccount").fadeIn(500);});
 				} else {
+					alert("desktop");
 					window.location.href = "https://github.com/senacor/Hacking-Days-2013";
 				}
 			});
