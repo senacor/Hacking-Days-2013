@@ -50,7 +50,6 @@
 
 			$("#triggerPopupCode").click(function(){
 				if (isMobile) {
-					alert("mobile");
 					$('.bmanpos').fadeOut(500);
 					sound = false;
 					$("#container").fadeOut(500, function() {$("#popupCode").fadeIn(500);});
@@ -401,6 +400,12 @@
 		<form id="popupStory" class="overlay_form" style="display:none">
 			<p class="popupText">
 				Dieses Mal werden wir ein Spiel programmieren. Multi-Player, online und mit Anbindung in eine Datenbank. Als Client-Technologie stehen HTML5, CSS, JavaScript oder Java FX 2 zur Verfügung. Auf dem Server verwenden wir node.js (JavaScript) bzw. vert.x (Java, JavaScript, Groovy ... polyglott eben). Zwischen Client und Server werden wir mit WebSockets kommunizieren und Accounts und Highscores landen in einer NoSQL Datenbank (Riak). Da will noch jemand Responsive Web Design mit reinbringen? Ok ... merkt unsere HTML5 Client Anwendung, dass sie auf einem Smartphone läuft, wird kein Spielfeld, sondern ein Gamecontroller dargestellt!
+	    	</p>
+			<a href="#" id="triggerCloseStory" >Close</a>
+		</form>
+		<form id="popupCode" class="overlay_form" style="display:none">
+			<p class="popupText">
+				Go, get a real computer, an GitHub account and check out the <a href="http://tinyurl.com/hackingdays">repo!</a> 
 	    	</p>
 			<a href="#" id="triggerCloseStory" >Close</a>
 		</form>
