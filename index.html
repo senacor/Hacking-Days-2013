@@ -15,7 +15,6 @@
 
 		$(function() {
 			var isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
-			alert("ua: "+navigator.userAgent);
 
 			var ch = 0;
 			var item = 0;
@@ -50,14 +49,12 @@
 			});
 
 			$("#triggerPopupCode").click(function(){
-				alert("code");
 				if (isMobile) {
 					alert("mobile");
 					$('.bmanpos').fadeOut(500);
 					sound = false;
-					$("#container").fadeOut(500, function() {$("#popupAccount").fadeIn(500);});
+					$("#container").fadeOut(500, function() {$("#popupCode").fadeIn(500);});
 				} else {
-					alert("desktop");
 					window.location.href = "https://github.com/senacor/Hacking-Days-2013";
 				}
 			});
