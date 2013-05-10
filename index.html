@@ -48,6 +48,20 @@
 				$("#popupAccount").fadeOut(500, function() {$("#container").fadeIn(500); $('.bmanpos').fadeIn(500); sound = true;});
 			});
 
+			$("#triggerPopupCode").click(function(){
+				if (isMobile) {
+					$('.bmanpos').fadeOut(500);
+					sound = false;
+					$("#container").fadeOut(500, function() {$("#popupAccount").fadeIn(500);});
+				} else {
+					window.location.href = "https://github.com/senacor/Hacking-Days-2013";
+				}
+			});
+				 
+			$("#triggerCloseCode").click(function(){
+				$("#popupAccount").fadeOut(500, function() {$("#container").fadeIn(500); $('.bmanpos').fadeIn(500); sound = true;});
+			});
+
 			$("#triggerPopupStory").click(function(){
 				$('.bmanpos').fadeOut(500);
 				sound = false;
@@ -393,7 +407,7 @@
 			<div class="navbar"> 
 				<ul>
 					<li><a id="triggerPopupStory" href="#">story</a></li>
-					<li><a href="https://github.com/senacor/Hacking-Days-2013">code</a></li>
+					<li><a id="triggerPopupCode" href="#">code</a></li>
 					<li><a id="triggerPopupAccount" href="#">account</a></li>
 					<li><a href="https://github.com/senacor/Hacking-Days-2013.git">clone</a></li>
 				</ul>
@@ -414,6 +428,7 @@
 				<li>riak</li>
 				<li>fun!</li>
 				<li>even more fun!</li>
+				<li>tinyurl.com/hackingdays</li>
 			</ul>
 			<div id="showCaption" class="lcdTextSmall lcdGlow">_</div>
 		</div>
