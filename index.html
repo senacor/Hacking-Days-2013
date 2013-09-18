@@ -12,6 +12,18 @@
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 		<script type="text/javascript">
+		$(document).ready(function() {
+
+	      $("#navBar").on('click', 'div', function(){
+	        $("#cubeSpinner").css("transform","rotateY("+($(this).index() * -90)+"deg)");
+	      });
+
+	      $("#transparency").click(function() {
+	        $("#cubeSpinner img").toggleClass("trans");
+	        $(this).toggleClass("selected");
+	      });
+
+	    });
 
 		$(function() {
 			var isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
@@ -37,41 +49,6 @@
     			height : $(window).height()
 			};
 
-			// popups open/close
-			$("#triggerPopupAccount").click(function(){
-				$('.bmanpos').fadeOut(500);
-				sound = false;
-				$("#container").fadeOut(500, function() {$("#popupAccount").fadeIn(500);});
-			});
-				 
-			$("#triggerCloseAccount").click(function(){
-				$("#popupAccount").fadeOut(500, function() {$("#container").fadeIn(500); $('.bmanpos').fadeIn(500); sound = true;});
-			});
-
-			$("#triggerPopupCode").click(function(){
-				if (isMobile) {
-					$('.bmanpos').fadeOut(500);
-					sound = false;
-					$("#container").fadeOut(500, function() {$("#popupCode").fadeIn(500);});
-				} else {
-					window.location.href = "https://github.com/senacor/Hacking-Days-2013";
-				}
-			});
-				 
-			$("#triggerCloseCode").click(function(){
-				$("#popupAccount").fadeOut(500, function() {$("#container").fadeIn(500); $('.bmanpos').fadeIn(500); sound = true;});
-			});
-
-			$("#triggerPopupStory").click(function(){
-				$('.bmanpos').fadeOut(500);
-				sound = false;
-				$("#container").fadeOut(500, function() {$("#popupStory").fadeIn(500);});
-			});
-				 
-			$("#triggerCloseStory").click(function(){
-				$("#popupStory").fadeOut(500, function() {$("#container").fadeIn(500); $('.bmanpos').fadeIn(500); sound = true;});
-			});
-
 			// read items into array for faster access
 		    var it = new Array();
 			for (i=0; i<numItems; i++) {
@@ -94,7 +71,7 @@
 				if(item < numItems) {
 					// call the keystroke function for that line
 					var text = it[item];
-					type(text, (item==numItems-1));
+					type(text);
 					text = null;
 					// set the timeout for the next function call
 					var tick = setTimeout(tickInterval, time);
@@ -104,31 +81,26 @@
 				}
 			}
 			
-			function type(text, last) {
+			function type(text) {
 				// set the timer for keystroke-delay
 				// -> 30msec + random value 0-250 msec to simulate "think pauses"
 				time = delay+Math.floor((Math.random()*250)+1);
 				// play keyclick sound ...
 				if (sound && !isMobile) {
-					click.play();
+					playClicksound();
 				}
 				// ... and show one more character of the line
 				showCaption.html(text.substr(0, ch++)+"_");
 				if(ch > text.length) {
 					// all characters shown, fade out and switch to next line, start with first character
 					// longer wait time between lines (3 seconds)
-					item++;
+					item = (item+1)%numItems;
 					ch = 0;
 					time = wait;
-					// only fade if that was not the last line
-					if (!last) {
-						showCaption.fadeOut(wait, function() {
-								showCaption.html(""); 
-								showCaption.show();
-						});
-					} else {
-						doneWithText = true;
-					}
+					showCaption.fadeOut(wait, function() {
+							showCaption.html(""); 
+							showCaption.show();
+					});
 				}	
 			}
 			
@@ -164,9 +136,15 @@
 					startStuff();
 				} else {
 					$('#header').toggleClass('lcdGlow');
+					$('#footer').toggleClass('lcdGlow');
 					delay = delays[0];
 					setTimeout(function() {turnOnLight(delays.slice(1))}, delay);
 				}
+			}
+
+			function playClicksound() {
+				click.load();
+				click.play();
 			}
 			// ok functions are defined, now let's start typing and walking ...
 
@@ -201,7 +179,7 @@
 
 		.lcdGlow {
 			color: #8AEBB4;
-			text-shadow: 0 0 10px #20FA7F, 0 0 20px #20FA7F, 0 0 30px #20FA7F, 0 0 40px #57AD7C, 0 0 70px #57AD7C, 0 0 80px #57AD7C, 0 0 100px #57AD7C, 0 0 150px #57AD7C;
+			text-shadow: 0 0 40px #20FA7F;
 		}
 		.lcdTextLarge {
 			font-family: coolfont, Arial, Sans-Serif;
@@ -210,10 +188,19 @@
 		}
 		.lcdTextSmall {
 			font-family: coolfont, Arial, Sans-Serif;
-			font-size: 50px;
+			font-size: 30px;
 			color: #8AEBB4;
-			text-shadow: 0 0 10px #20FA7F, 0 0 20px #20FA7F, 0 0 30px #20FA7F, 0 0 40px #57AD7C, 0 0 70px #57AD7C, 0 0 80px #57AD7C, 0 0 100px #57AD7C, 0 0 150px #57AD7C;
+			text-shadow: 0 0 20px #20FA7F;
+			margin-left: 10px;
 		}
+		.lcdTextTiny {
+			font-family: coolfont, Arial, Sans-Serif;
+			font-size: 20px;
+			color: #8AEBB4;
+			text-shadow: 0 0 10px #20FA7F;
+			margin-left: 10px;
+		}
+
 
 		#caption {
 			display: none;
@@ -221,7 +208,7 @@
 		}
 
 		#container {
-			margin-top: 100px;
+			margin-top: 30px;
 			margin-left: auto;
 			margin-right: auto;
 			margin-bottom: 0;
@@ -273,45 +260,135 @@
 			height: 25px;
 		}
 
-
-		.navbar {
-			margin:0;
-			padding:0;
-			overflow:hidden;
-		}
-		.navbar li {
-			list-style-type:none;
-			float:left;
-		}
-		.navbar a:link, .navbar a:visited {
-			display:block;
-			width: 120px;
-			padding: 5px;
-			font-weight:bold;
-			color: #334F38;
-			text-align:center;
-			text-decoration:none;
-			text-transform:uppercase;
-		}
-		.navbar a:hover, .navbar a:active {
-			color: #8AEBB4;
-			text-shadow: 0 0 10px #20FA7F, 0 0 20px #20FA7F, 0 0 30px #20FA7F, 0 0 40px #57AD7C, 0 0 70px #57AD7C, 0 0 80px #57AD7C, 0 0 100px #57AD7C, 0 0 150px #57AD7C;
-		}
-
-		.overlay_form {
-			position: absolute;
-			border: 5px solid #8AEBB4;
-			padding: 10px;
-			background: #334F38;
-			color: #8AEBB4;
-			margin: 15%;
-			text-align: justify;
-		}
-
-		.overlay_form a:link, .overlay_form a:visited, .overlay_form a:active {
+		.lcdTextTiny a:link, .lcdTextTiny a:visited, .lcdTextTiny a:active {
 			text-decoration:none;
 			font-weight: bold;
 			color: darkgray;
+			text-shadow: 0 0 10px orange;
+		}
+
+		#navBar {
+	  	  	margin-left: 0px;
+	  	  	margin-top: 0px;
+	  	}
+	  	.navItem {
+	  	  	float:left;
+	  	  	text-align: center;
+	  	  	border:0px white solid;
+	  	  	width: 100px;
+	  	  	height: 20px;
+	  	  	color: #334F38;
+	  	  	text-shadow: 0 0 0px #334F38;;
+	  	  	-webkit-transition: all 0.3s ease-in;
+	  	  	-moz-transition: all 0.3s ease-in;
+	  	  	-ms-transition: all 0.3s ease-in;
+	  	  	transition: all 0.3s ease-in;
+	  	}
+	  	.navItem:hover {
+	  	  	color: #8AEBB4;
+			text-shadow: 0 0 20px #20FA7F;
+	  	  	-webkit-transform:scale(1.2,1.2);
+	  	  	-moz-transform:scale(1.2,1.2);
+	  	  	-ms-transform:scale(1.2,1.2);
+	  	  	transform:scale(1.2,1.2);
+	  	  	-webkit-transition: all 0.3s ease-out;
+	  	  	-moz-transition: all 0.3s ease-out;
+	  	  	-ms-transition: all 0.3s ease-out;
+	  	  	transition: all 0.3s ease-out;
+	  	}
+	  	#content {
+	  	  	border: 0px white solid;
+	  	  	margin-left: 0px;
+	  	  	margin-right: 0px;
+	  	  	margin-top: 50px;
+	  	  	margin-bottom: 50px;
+	  	  	clear:both;
+	  	}
+
+		@media only screen and (min-device-width: 480px) {
+			#cubeCarousel {
+			    -webkit-perspective: 800;
+			    -moz-perspective: 800px;
+			    -ms-perspective: 800;
+			    perspective: 800;
+
+			    -webkit-perspective-origin: 50% 100px;
+			    -moz-perspective-origin: 50% 100px;
+			    -ms-perspective-origin: 50% 100px;
+			    perspective-origin: 50% 100px;
+
+			    margin:100px auto 0px auto;
+			    width:600px;
+			    height:400px;
+			}
+
+			#cubeCarousel #cubeSpinner {
+			    position: relative;
+			    margin: 0 auto;
+			    height: 281px;
+			    width: 600px;
+			    -webkit-transform-style: preserve-3d;
+			    -moz-transform-style: preserve-3d;
+			    -ms-transform-style: preserve-3d;
+			    transform-style: preserve-3d;
+
+			    -webkit-transform-origin: 50% 100px 0;
+			    -moz-transform-origin: 50% 100px 0;
+			    -ms-transform-origin: 50% 100px 0;
+			    transform-origin: 50% 100px 0;
+
+			    -webkit-transition:all 0.5s ease-in-out;
+			    -moz-transition:all 0.5s ease-in-out;
+			    -ms-transition:all 0.5s ease-in-out;
+			    transition:all 0.5s ease-in-out;
+			}
+
+			#cubeCarousel #Ycube,#cubeCarousel #Zcube {
+			    -webkit-transform-style: preserve-3d;
+			    -moz-transform-style: preserve-3d;
+			    -ms-transform-style: preserve-3d;
+			    transform-style: preserve-3d;
+			}
+
+			#cubeCarousel .face {
+			    position: absolute;
+			    height: 281px;
+			    width: 600px;
+			    padding: 0px;
+			    background: rgba(0, 0, 0, 1.0);
+			}
+
+			#cubeSpinner .one {
+			    -webkit-transform: translateZ(300px);
+			    -moz-transform: translateZ(300px);
+			    -ms-transform: translateZ(300px);
+			    transform: translateZ(300px);
+			}
+
+			#cubeSpinner .two {
+			    -webkit-transform: rotateY(90deg) translateZ(300px);
+			    -moz-transform: rotateY(90deg) translateZ(300px);
+			    -ms-transform: rotateY(90deg) translateZ(300px);
+			    transform: rotateY(90deg) translateZ(300px);
+			}
+
+			#cubeSpinner .three {
+			    -webkit-transform: rotateY(180deg) translateZ(300px);
+			    -moz-transform: rotateY(180deg) translateZ(300px);
+			    -ms-transform: rotateY(180deg) translateZ(300px);
+			    transform: rotateY(180deg) translateZ(300px);
+			}
+
+			#cubeSpinner .four {
+			    -webkit-transform: rotateY(-90deg) translateZ(300px);
+			    -moz-transform: rotateY(-90deg) translateZ(300px);
+			    -ms-transform: rotateY(-90deg) translateZ(300px);
+			    transform: rotateY(-90deg) translateZ(300px);
+			}
+
+			#footer {
+				display:none;
+			}
 		}
 
 		@media only screen and (max-device-width: 480px) {
@@ -326,121 +403,116 @@
 
 			.lcdGlow {
 				color: #8AEBB4;
-				text-shadow: 0 0 0px #8AEBB4;
+				text-shadow: 0 0 10px #8AEBB4;
 			}
 			.lcdTextLarge {
 				font-family: coolfont, Arial, Sans-Serif;
-				font-size: 25px;
-				text-shadow: 0 0 0px #8AEBB4;				
+				font-size: 22px;
+				text-shadow: 0 0 10px #8AEBB4;				
 			}
 			.lcdTextSmall {
 				font-family: coolfont, Arial, Sans-Serif;
 				font-size: 18px;
 				color: #8AEBB4;
-				text-shadow: 0 0 0px #8AEBB4;
-			}
-
-			.navbar {
-				width:100%;
-				background-color: #334F38;
-			}.navbar ul {
-				width: 100%;
-				margin: 0px;
-				padding: 0px;
-			}
-			.navbar li {
-				box-sizing: border-box;
-				border:1px solid ;
-				border-color: black;
-				list-style-type:none;
-				float:left;
-				width: 50%;
-				padding-top: 20px;
-				padding-bottom: 20px;
-			}
-			.navbar a:link, .navbar a:visited {
-				display:block;
-				font-weight:normal;
-				color: #8AEBB4;
-				text-align:center;
-				text-decoration:none;
-				text-transform:uppercase;
-				width:100%;
-			}
-			.navbar a:hover, .navbar a:active {
-				color: #8AEBB4;
 				text-shadow: 0 0 10px #8AEBB4;
-			}		
+			}
 
 			#header {
 				margin-left: 10px;
+				position:fixed;
+				top:0;
+				width:100%;
+				background: rgba(0, 0, 0, 0.7);
 			}
 			#showCaption {
 				margin-left: 10px;
 			}
-
-			.overlay_form {
-				border: 2px solid #8AEBB4;
-				padding: 5px;
-				margin: 5%;
+			#navBar {
+				display:none;
 			}
-		}
+			.face  {
+				display:none;
+			}
+			 .one  {
+				display:inline;
+			}
 
+			.bmanpos {
+		  		bottom:50px;
+			}
+
+			#footer {
+				margin-left:10px;
+				position: fixed;
+    			bottom: 0;
+    			width: 100%;
+    			background: rgba(0, 0, 0, 0.7);
+			}
+
+		}
 		</style>
 	</head>
 
 
 	<body>
-		<form id="popupAccount" class="overlay_form" style="display:none">
-			<p class="popupText">
-				Wer schon einen GitHub Account hat, bitte einfach <a href="mailto:hackingdays-host@senacor.com?Subject=Hier%20ist%20mein%20GitHub-Account%20für%20die%20Hacking%20Days">an die Hosts senden</a>&nbsp;- dann erfolgt sofort die Freischaltung. Ansonsten schnell <a href="http://github.com">einen Account beantragen</a>&nbsp;... dauert nur ein paar Sekunden.
-	    	</p>
-			<a href="#" id="triggerCloseAccount" >Close</a>
-		</form>
-		<form id="popupStory" class="overlay_form" style="display:none">
-			<p class="popupText">
-				Dieses Mal werden wir ein Spiel programmieren. Multi-Player, online und mit Anbindung in eine Datenbank. Als Client-Technologie stehen HTML5, CSS, JavaScript oder Java FX 2 zur Verfügung. Auf dem Server verwenden wir node.js (JavaScript) bzw. vert.x (Java, JavaScript, Groovy ... polyglott eben). Zwischen Client und Server werden wir mit WebSockets kommunizieren und Accounts und Highscores landen in einer NoSQL Datenbank (Riak). Da will noch jemand Responsive Web Design mit reinbringen? Ok ... merkt unsere HTML5 Client Anwendung, dass sie auf einem Smartphone läuft, wird kein Spielfeld, sondern ein Gamecontroller dargestellt!
-	    	</p>
-			<a href="#" id="triggerCloseStory" >Close</a>
-		</form>
-		<form id="popupCode" class="overlay_form" style="display:none">
-			<p class="popupText">
-				Go, get a real computer, an GitHub account and check out the <a href="http://tinyurl.com/hackingdays">repo!</a> 
-	    	</p>
-			<a href="#" id="triggerCloseStory" >Close</a>
-		</form>
 		<div id="container">	
-			<div class="navbar"> 
-				<ul>
-					<li><a id="triggerPopupStory" href="#">story</a></li>
-					<li><a id="triggerPopupCode" href="#">code</a></li>
-					<li><a id="triggerPopupAccount" href="#">account</a></li>
-					<li><a href="https://github.com/senacor/Hacking-Days-2013.git">clone</a></li>
-				</ul>
-			</div> 
+			<div id="navBar">
+  	  			<div id="firstItem" class="navItem"><span>hd13</span></div>
+  	  			<div id="secondItem" class="navItem"><span>story</span></div>
+  	  			<div id="thirdItem" class="navItem"><span>account</span></div>
+  	  			<div id="fourthItem" class="navItem"><span>code</span></div>
+    		</div> 
 			
-			<h1 id="header" class="lcdTextLarge">Hacking Days 2013</h1>
-			<ul id="caption">
-				<li>BomberMan retro gaming ...</li>
-				<li>cool frontends</li>
-				<li>HTML5 canvas</li>
-				<li>CSS</li>
-				<li>JavaFX 2</li>
-				<li>websockets</li>
-				<li>highly scalable middle tiers</li>
-				<li>vert.x</li>
-				<li>node.js</li>
-				<li>nosql key/value datastore</li>
-				<li>riak</li>
-				<li>fun!</li>
-				<li>even more fun!</li>
-				<li>tinyurl.com/hackingdays</li>
-			</ul>
-			<div id="showCaption" class="lcdTextSmall lcdGlow">_</div>
+			<div id="header" style="clear:both">
+				<h1 class="lcdTextLarge">Hacking Days 2013</h1>
+            </div>
+
+			<div id="content">
+		  	  <div id="cubeCarousel">
+			    <div id="cubeSpinner">
+			      <div class="face one">
+		        	<ul id="caption">
+						<li>BomberMan retro gaming ...</li>
+						<li>cool frontends</li>
+						<li>HTML5 canvas</li>
+						<li>CSS</li>
+						<li>JavaFX 2</li>
+						<li>websockets</li>
+						<li>highly scalable middle tiers</li>
+						<li>vert.x</li>
+						<li>node.js</li>
+						<li>nosql key/value datastore</li>
+						<li>riak</li>
+						<li>fun!</li>
+						<li>even more fun!</li>
+					</ul>
+					<div id="showCaption" class="lcdTextSmall lcdGlow">_</div>
+			      </div>
+			      <div class="face two">
+			        <p class="lcdTextTiny">
+						Dieses Mal werden wir ein Spiel programmieren. Multi-Player, online und mit Anbindung an eine Datenbank. Als Client-Technologie stehen HTML5, CSS, JavaScript oder Java FX 2 zur Verfügung. Auf dem Server verwenden wir node.js (JavaScript) bzw. vert.x (Java, JavaScript, Groovy ... polyglott eben). Zwischen Client und Server werden wir mit WebSockets kommunizieren und Accounts und Highscores landen in einer NoSQL Datenbank (Riak). Da will noch jemand Responsive Web Design mit reinbringen? Ok ... merkt unsere HTML5 Client Anwendung, dass sie auf einem Smartphone läuft, wird kein Spielfeld, sondern ein Gamecontroller dargestellt!
+			    	</p>
+			      </div>
+			      <div class="face three">
+			        <p class="lcdTextTiny">
+						Wer schon einen GitHub Account hat, bitte einfach <a href="mailto:hackingdays-host@senacor.com?Subject=Hier%20ist%20mein%20GitHub-Account%20für%20die%20Hacking%20Days">an die Hosts senden</a>&nbsp;- dann erfolgt sofort die Freischaltung. Ansonsten schnell <a href="http://github.com">einen Account beantragen</a>&nbsp;... dauert nur ein paar Sekunden.
+			    	</p>
+			      </div>
+			      <div class="face four">
+			        <p class="lcdTextTiny">
+						<a href="https://github.com/senacor/Hacking-Days-2013.git">Clone</a> &amp; start coding ... !
+			    	</p>
+			      </div>
+			    </div>
+			  </div>
+		  	</div>
 		</div>
 		
 		<div class="bmanpos">
 			<img id="man" class="bomberman_r1" src="spacer.gif" width="1" height="1" />
+		</div>
+		<div id="footer">
+			<h1 class="lcdTextLarge">tinyurl.com/hackingdays</h1>
 		</div>
 	</body>
 </html>
