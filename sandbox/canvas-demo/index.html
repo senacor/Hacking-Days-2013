@@ -1,0 +1,131 @@
+<!DOCTYPE>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8" />
+  <title>Run, Forrest. Run!!</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <style type="text/css">
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas" width="400" height="400"></canvas>
+  <script type="text/javascript">
+    // Get Canvas
+    var canvas = $("#canvas")[0];
+    var ctx = canvas.getContext("2d");
+
+
+    // Load Bomberman Sprites (TODO...)
+    var spritesReady = false;
+    var spritesImage = new Image();
+    spritesImage.onload = function () {
+      spritesReady = true;
+    };
+    spritesImage.src = "bomberman_sprites.png";
+
+    // Define orientation model with offset values
+    var orientation = {
+      right: { offsetY: 8 },
+      down:  { offsetY: 58 },
+      up:    { offsetY: 108 },
+      left:  { offsetY: 158 } // Left sprite missing... 
+    }
+
+    // Bomberman model
+    var bomberman = {
+      x: 0,
+      y: 0,
+      width: 16,
+      height: 25,
+      direction: orientation.right,
+      spriteFrameX: 0
+    };
+
+    // Event listener for key press events
+    var keysDown = {};
+    addEventListener("keydown", function (e) {
+      keysDown[e.keyCode] = true;
+    }, false);
+
+    addEventListener("keyup", function (e) {
+      delete keysDown[e.keyCode];
+    }, false);
+
+    var steps = 5;
+    // Update game objects
+    var update = function () {
+      if (38 in keysDown) { // Player holding up
+        calSpriteFrame();
+        bomberman.direction = orientation.up;
+        bomberman.y -= steps;
+      }
+      if (40 in keysDown) { // Player holding down
+        calSpriteFrame();
+        bomberman.direction = orientation.down;
+        bomberman.y += steps;
+      }
+      if (37 in keysDown) { // Player holding left
+        calSpriteFrame();
+        bomberman.direction = orientation.left;
+        bomberman.x -= steps;
+      }
+      if (39 in keysDown) { // Player holding right
+        calSpriteFrame();
+        bomberman.direction = orientation.right;
+        bomberman.x += steps;
+      }
+      checkBorderCollision();
+    };
+
+    // Select next sprite image for the current orientation
+    var calSpriteFrame = function() {
+        if (bomberman.spriteFrameX === 200) {
+          bomberman.spriteFrameX = 50;
+        } else {
+          bomberman.spriteFrameX += 50;
+        }
+    };
+
+    // Keep Bomberman inside canvas area
+    var checkBorderCollision = function() {
+      if (bomberman.y < 0) bomberman.y = 0;
+      if (bomberman.x < 0) bomberman.x = 0;
+      if (bomberman.x + bomberman.width > canvas.width) bomberman.x = canvas.width - bomberman.width;
+      if (bomberman.y + bomberman.height > canvas.height) bomberman.y = canvas.height - bomberman.height;
+    };
+
+    var render = function() {
+      if (spritesReady) {
+        // Clear "previous" position....check why this is necessary
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Draw Bomberman
+        ctx.drawImage(
+          spritesImage,                 // Imgage
+          bomberman.spriteFrameX,       // Source x
+          bomberman.direction.offsetY,  // Source y
+          bomberman.width,              // Source width
+          bomberman.height,             // Source height
+          bomberman.x,                  // Target x
+          bomberman.y,                  // Target y
+          bomberman.width,              // Target width
+          bomberman.height              // Target height
+        );
+      }
+    };
+
+    // Main loop
+    var main = function () {
+      update();
+      render();
+    };
+    setInterval(main, 50);
+
+  </script>
+</body>
+
+
+</html>
