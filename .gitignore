@@ -16,3 +16,5 @@ profile
 *.moved-aside
 DerivedData
 .idea/
+/sandbox/vertx-simpleserver/.nb-gradle/private/
+/bomberman-client-prototype/nbproject/private/

@@ -78,13 +78,13 @@ function handlePressedKey(event) {
 
     }
     //right_arrow
-    else if (event.keyCode == 39 && x < 741) {
+    else if (event.keyCode == 39 && x < 640) {
         x+=20;
         img.sprite = createSprite(0, [4, 5, 3], true)
 
     }
     //down_arrow
-    else if (event.keyCode == 40 && y < 721) {
+    else if (event.keyCode == 40 && y < 640) {
         y+=20;
         img.sprite = createSprite(0, [7, 8, 6], true)
     }
