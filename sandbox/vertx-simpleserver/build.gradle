@@ -64,7 +64,10 @@ dependencies {
 }
 
 test {
-  exclude 'com/mycompany/**'
+  /* Configure which tests are included
+  include 'org/foo/**'
+  exclude 'org/boo/**'
+  */
 
 }
 

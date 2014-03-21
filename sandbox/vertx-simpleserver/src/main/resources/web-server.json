@@ -1,0 +1,20 @@
+{
+//    "web_root": "web",
+//    "index_page": <index_page>,
+//    "host": <host>,
+//    "port": <port>,
+//    "static_files": <static_files>,
+//    "route_matcher": <route_matcher>,
+//    "gzip_files": <gzip_files>,
+//
+//    "ssl": <ssl>,
+//    "key_store_password": <key_store_password>,
+//    "key_store_path": <key_store_path>,
+//
+//    "bridge": <bridge>,
+//    "inbound_permitted": <inbound_permitted>,
+//    "outbound_permitted": <outbound_permitted>,
+//    "sjs_config": <sjs_config>,
+//    "auth_timeout": <auth_timeout>,
+//    "auth_address": <auth_address>
+}
