@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+       <head>
+         <script type="text/javascript" src="js/libs/sockjs-client/sockjs.min.js"></script>
+         <script type="text/javascript" src="js/libs/vertx/vertxbus.js"></script>
+         <script>
+           var bus = new vertx.EventBus("http://localhost:8080/eventbus");
+           var messages = [];
+           bus.onopen = function() {
+             console.log("bus connection is now open - registering handler for test.address ...");
+             bus.registerHandler("test.address", function(message) {
+               console.log("received a message: " + JSON.stringify(message));
+               messages = [message].concat(messages);
+               messages = messages.slice(0, 5);
+               for (i=0; i<messages.length; i++) {
+                 var entryName = "#entry"+(i+1);
+                 var entryValue = messages[i].timestamp+": "+messages[i].text
+                 $(entryName).html(entryValue);
+           } });
+
+} </script>
+
+       </head>
+       <body>
+         <h3>Vert.x clientside bus demo</h3>
+         <ul>
+             <li id="entry1"></li>
+             <li id="entry2"></li>
+             <li id="entry3"></li>
+             <li id="entry4"></li>
+             <li id="entry5"></li>
+          </ul>
+       </body>
+</html>

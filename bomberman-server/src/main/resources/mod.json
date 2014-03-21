@@ -1,7 +1,7 @@
 {
 
   // Java verticle
-  //"main":"com.mycompany.myproject.PingVerticle",
+  //"main":"com.mycompany.myproject.PingPongServer",
   "main":"com.senacor.bm.server.Server",
 
  
