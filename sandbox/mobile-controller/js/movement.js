@@ -24,7 +24,7 @@ function init() {
 
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = "#773333";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, x, y, width, height);
 }
