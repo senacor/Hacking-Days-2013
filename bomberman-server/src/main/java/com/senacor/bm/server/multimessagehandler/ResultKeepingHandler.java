@@ -17,7 +17,7 @@ public class ResultKeepingHandler<E> implements Handler<Message<E>> {
     public void handle(Message<E> event) {
         result = event.body();
         resultSet = true;
-        resultHandler.handle(null);
+        resultHandler.handle(this);
     }
     
     public void setResultHandler(Handler<ResultKeepingHandler<?>> handler) {
