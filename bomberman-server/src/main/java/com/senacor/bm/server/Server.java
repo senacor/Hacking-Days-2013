@@ -31,7 +31,7 @@ public class Server extends Verticle {
                 final ResultConcatenatingHandler concatenator = new ResultConcatenatingHandler() {
                     @Override
                     protected String concatenateResults() {
-                        return playerNameHandler.getResultMessage() + pointsHandler.getResultMessage();
+                        return playerNameHandler.getResultMessage() + ": " + pointsHandler.getResultMessage();
                     }
                 };
 
