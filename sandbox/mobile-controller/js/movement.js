@@ -20,7 +20,7 @@ function init() {
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext('2d');
     timer=setInterval(draw, 200);
-    img.sprite = createSprite(4, [0], false);
+    img.sprite = createSprite(1, [0], true);
     return timer;
 }
 
@@ -31,9 +31,13 @@ function draw(){
     img.sprite.update(1 );
     img.sprite.canvasPos = [x, y];
     img.sprite.render(ctx);
+    img.sprite.done = true;
 }
 
 function handlePressedKey(event) {
+    if(!img.sprite.done)
+        return;
+
     //left arrow
     if (event.keyCode == 37 && x > 10) {
         x-=20;
@@ -46,13 +50,13 @@ function handlePressedKey(event) {
 
     }
     //right_arrow
-    else if (event.keyCode == 39 && x < 441) {
+    else if (event.keyCode == 39 && x < 741) {
         x+=20;
         img.sprite = createSprite(0, [4, 5, 3], true)
 
     }
     //down_arrow
-    else if (event.keyCode == 40 && y < 421) {
+    else if (event.keyCode == 40 && y < 721) {
         y+=20;
         img.sprite = createSprite(0, [7, 8, 6], true)
     }

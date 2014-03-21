@@ -9,11 +9,12 @@
         this.dir = dir || 'horizontal';
         this.once = once;
         this.canvasPos = [0, 0];
+        this.done = !once;
     };
 
     Sprite.prototype = {
         update: function(dt) {
-            this._index += this.speed*dt;
+            this._index += this.speed * dt;
         },
 
         render: function(ctx) {
