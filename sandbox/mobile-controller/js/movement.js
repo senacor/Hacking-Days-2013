@@ -16,6 +16,7 @@ var img = new Image();
 img.src = "img/Bomberman.gif"
 
 function init() {
+    window.addEventListener("keydown", handlePressedKey, false);
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext('2d');
     timer=setInterval(draw, 10);
@@ -30,8 +31,6 @@ function draw(){
 }
 
 function handlePressedKey(event) {
-    event = event || window.event;
-
     //left arrow
     if (event.keyCode == 37 && x > 10) {
         x-=20;
