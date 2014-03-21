@@ -13,7 +13,7 @@ var height=50;
 var img = new Image();
 
 //set an image url
-img.src = "img/Bomberman.gif"
+img.src = "img/bomberman_2.gif"
 
 function init() {
     window.addEventListener("keydown", handlePressedKey, false);
@@ -37,24 +37,24 @@ function handlePressedKey(event) {
     //left arrow
     if (event.keyCode == 37 && x > 10) {
         x-=20;
-        img.sprite = createSprite(4, [8, 9, 8, 7], true)
+        img.sprite = createSprite(0, [10, 11, 9], true)
     }
     //up arrow
     else if (event.keyCode == 38 && y > 10) {
         y-=20;
-        img.sprite = createSprite(5, [0, 1, 2], true)
+        img.sprite = createSprite(0, [1, 2, 0], true)
 
     }
     //right_arrow
     else if (event.keyCode == 39 && x < 441) {
         x+=20;
-        img.sprite = createSprite(5, [7, 8, 9], true)
+        img.sprite = createSprite(0, [4, 5, 3], true)
 
     }
     //down_arrow
     else if (event.keyCode == 40 && y < 421) {
         y+=20;
-        img.sprite = createSprite(4, [0, 1, 2], true)
+        img.sprite = createSprite(0, [7, 8, 6], true)
     }
     //enter
     else if (event.keyCode == 13 ) {
@@ -63,9 +63,9 @@ function handlePressedKey(event) {
 }
 
 function createSprite(row, frames, playOnce){
-     return new Sprite("img/bomber.png", [0, calcRow(row)], [26, 29], 1, frames, "horizontal", playOnce);
+     return new Sprite("img/bomberman_2.gif", [0, calcRow(row)], [17.55, 30], 1, frames, "horizontal", playOnce);
 }
 
 function calcRow(r){
-    return r*29;
+    return r*30;
 }
