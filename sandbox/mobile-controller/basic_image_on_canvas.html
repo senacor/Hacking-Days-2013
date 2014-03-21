@@ -1,61 +1,17 @@
 Move the bomberman on canvas
 <html>
-<head>
-    <title>Move the bomberman on canvas</title>
-    <script type="text/javascript">
-        var     canvas,
-                ctx,
-        //save the parameters to variables for easier clearing
-                mx=0,
-                my=0,
-                x=10,
-                y=20,
-                width=50,
-                height=50,
-                img = new Image();
+    <head>
+        <title>Move the bomberman on canvas</title>
+        <script type="text/javascript" src="js/movement.js"></script>
+        <script type="text/javascript" src="js/sprite.js"></script>
+    </head>
 
-
-        //set an image url
-        img.src = "img/Bomberman.gif"
-
-
-        function init() {
-            canvas = document.getElementById("canvas");
-            ctx = canvas.getContext('2d');
-            ctx.strokeStyle =
-            //initial drawing
-            draw();
-        }
-        function draw(){
-            ctx.drawImage(img,x,y,width,height);
-        }
-
-        function taste(event) {
-            ctx.clearRect(x,y,width,height);
-            event = event || window.event;
-            //left arrow
-            if (event.keyCode == 37 && x > 10) {
-                x-=20;
-            }
-            //up arrow
-            else if (event.keyCode == 38 && y >10) {
-                y-=20;
-            }
-            //right_arrow
-            else if (event.keyCode == 39 && x < 441) {
-                x+=20;
-            }
-            //down_arrow
-            else if (event.keyCode == 40 && y < 421) {
-                y+=20;
-            }
-            draw();
-        }
-    </script>
-</head>
-<body onLoad="init();" onkeydown="taste();">
-<canvas id="canvas" width="500" height="500" style="border:1px solid #c3c3c3;">
-    Your browser doesn't support the HTML5 element canvas.
-</canvas>
-</body>
+    <body onLoad="init();">
+        <div>
+            <br>
+            <canvas id="canvas" width="500" height="500" style="border:1px solid #c3c3c3;">
+            Your browser doesn't support the HTML5 element canvas.
+            </canvas>
+        </div>
+    </body>
 </html>
