@@ -56,6 +56,10 @@ function handlePressedKey(event) {
         y+=20;
         img.sprite = createSprite(4, [0, 1, 2], true)
     }
+    //enter
+    else if (event.keyCode == 13 ) {
+        img.sprite = createSprite(6, [12, 13, 14], true)
+    }
 }
 
 function createSprite(row, frames, playOnce){
