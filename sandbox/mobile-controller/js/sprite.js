@@ -39,7 +39,7 @@
             x += frame * this.size[0];
 
             img2 = new Image();
-            img2.src = "img/bomber.png";
+            img2.src = "img/bomberman_2.gif";
 
             ctx.drawImage(img2,
                           x, y,
