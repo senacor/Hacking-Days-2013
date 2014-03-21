@@ -9,11 +9,12 @@
         this.dir = dir || 'horizontal';
         this.once = once;
         this.canvasPos = [0, 0];
+        this.done = !once;
     };
 
     Sprite.prototype = {
         update: function(dt) {
-            this._index += this.speed*dt;
+            this._index += this.speed * dt;
         },
 
         render: function(ctx) {
@@ -39,7 +40,7 @@
             x += frame * this.size[0];
 
             img2 = new Image();
-            img2.src = "img/bomber.png";
+            img2.src = "img/bomberman_2.gif";
 
             ctx.drawImage(img2,
                           x, y,
