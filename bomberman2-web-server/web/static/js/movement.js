@@ -161,13 +161,13 @@ function calcRow(r){
 }
 
 function stepIsPossible(stepX, stepY) {
-  actuelField = getActuelField();
+  actuelField = getActuellField();
   if (jsonBoard.felder[actuelField.xt + stepX][actuelField.yt + stepY] == "W")
     return false;
   else return true;
 }
 
-function getActuelField() {
+function getActuellField() {
   var xt = Math.floor(x/step);
   var yt = Math.floor(y/step);
   return new Field(xt, yt)
