@@ -1,5 +1,6 @@
 package com.senacor.bm.server;
 
+import com.senacor.bm.services.BombermanVerticle;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.Message;
 import org.vertx.java.platform.Verticle;
@@ -60,6 +61,8 @@ public class StateVerticle extends Verticle {
 		vertx.eventBus().registerHandler(ADDR_ALIVE, new SetAliveHandler());
 		vertx.eventBus().registerHandler(ADDR_POINTS, new SetPointsHandler());
 		vertx.eventBus().registerHandler(ADDR_STATUS, new GetStatusHandler());
+
+        container.deployVerticle(BombermanVerticle.class.getName());
 	}
 
 }

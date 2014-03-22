@@ -16,54 +16,35 @@ package com.senacor.bm.services;/*
  * @author <a href="http://tfox.org">Tim Fox</a>
  */
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.Message;
+import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
 
 import static org.vertx.testtools.VertxAssert.*;
 
-/**
- * Example Java integration test that deploys the module that this project builds.
- *
- * Quite often in integration tests you want to deploy the same module for all tests and you don't want tests
- * to start before the module has been deployed.
- *
- * This test demonstrates how to do that.
- */
-@Ignore
+
 public class BombermanVerticleIntegrationTest extends TestVerticle {
 
   @Test
-  public void testPing() {
-    container.logger().info("in testPing()");
-    vertx.eventBus().send("ping-address", "ping!", new Handler<Message<String>>() {
-      @Override
-      public void handle(Message<String> reply) {
-        assertEquals("pong!", reply.body());
+  public void testEventErmittleSpielfeld() {
 
-        /*
-        If we get here, the test is complete
-        You must always call `testComplete()` at the end. Remember that testing is *asynchronous* so
-        we cannot assume the test is complete by the time the test method has finished executing like
-        in standard synchronous tests
-        */
-        testComplete();
+    container.logger().info("send event: game.map.full");
+    vertx.eventBus().send("game.map.full", "???", new Handler<Message<JsonObject>>() {
+      @Override
+      public void handle(Message<JsonObject> reply) {
+          JsonObject map = reply.body();
+          container.logger().info("received jsonObject: " + map.toString());
+          assertNotNull(map.getNumber("width"));
+          testComplete();
       }
     });
   }
 
-  @Test
-  public void testSomethingElse() {
-    // Whatever
-    testComplete();
-  }
-
-
-  @Override 
+  @Override
   public void start() {
     // Make sure we call initialize() - this sets up the assert stuff so assert functionality works correctly
     initialize();
