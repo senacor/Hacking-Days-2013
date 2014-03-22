@@ -1,0 +1,1 @@
+../classes/production/bomberman2-aggregator/

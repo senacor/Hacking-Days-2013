@@ -1,0 +1,1 @@
+bin/vertx runMod de.codepitbull.javaland~aggregator-module~1.0.0-final -conf /Users/jmader/Documents/3_development/vcs/github_pflanzenmoerder/vertx-javaland/web-server/conf.json
