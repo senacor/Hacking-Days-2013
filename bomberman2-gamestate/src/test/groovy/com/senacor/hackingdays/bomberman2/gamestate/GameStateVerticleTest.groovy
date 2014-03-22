@@ -68,6 +68,7 @@ class GameStateVerticleTest extends TestVerticle{
                 vertx.eventBus().registerHandler("nr1.nextround", new Handler<Object>(){
                     @Override
                     void handle(Object event2) {
+                        println "3"
                         testComplete();
                     }
                 })
