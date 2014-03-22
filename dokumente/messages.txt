@@ -1,6 +1,6 @@
 Event-Logging
 
-address : vertx.mongopersistor
+address : hd13.eventlogger
 message : beliebiges JSON Objekt, sollte ein Feld "event-type" besitzen
 hinweis : wird vom Logger noch automatisch um einen Timestamp angereichert
 beispiel:
@@ -12,3 +12,7 @@ beispiel:
 }
 
 ==============
+
+Data-Store
+
+
