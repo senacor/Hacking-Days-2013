@@ -2,6 +2,11 @@ var canvas;
 var canvaswrapper;
 var ctx;
 
+var drawIntervalInMs = 20;
+var turnLengthInMs = 40;
+
+var drawsSinceLastUpdate = 0;
+var drawsRequiredForUpdate = turnLengthInMs/drawIntervalInMs;
 
 //movement variables
 var x=64;
@@ -33,7 +38,7 @@ function init(reply) {
     canvaswrapper = document.getElementById("canvaswrapper");
     canvaswrapper.addEventListener("keydown", handlePressedKey, false);
     canvas.addEventListener("click", focusCanvas, false);
-    timer=setInterval(draw, 200);
+    timer = setInterval(draw, drawIntervalInMs);
     //log the reply from gameworld
     var jsonString = JSON.stringify(reply);
     console.log(jsonString);
@@ -51,6 +56,10 @@ function init(reply) {
         }
     }
 
+    var players = reply.player
+    x *= players[0].position.x
+    y *= players[0].position.y
+
     img.sprite = createSprite(1, [0], true);
 
     return timer;
@@ -67,6 +76,7 @@ function draw(){
     img.sprite.canvasPos = [x, y];
     img.sprite.render(ctx);
     img.sprite.done = true;
+    drawsSinceLastUpdate += 1;
 }
 
 function drawBoard(ctx){
