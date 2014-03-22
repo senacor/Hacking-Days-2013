@@ -16,12 +16,7 @@ class EventLogger extends Verticle {
       def username = container.env["OPENSHIFT_MONGODB_DB_USERNAME"];
       def password = container.env["OPENSHIFT_MONGODB_DB_PASSWORD"];
 
-
-      println("port = " + port);
-      println("host = " + host);
-      println("username = " + username);
-      println("password = " + password);
-
+      // If Verticle is not deployed in Openshift...
       host = host == null ? "192.168.1.137" : host;
       port = port == null ? 27017 : port;
 
@@ -41,7 +36,15 @@ class EventLogger extends Verticle {
           eb.publish("event.dashboard", event);
       }
 
+      def captureReplayHandler = { message ->
+          println("Received game state infomration: " + message.body)
+          def saveMessage = [action: "save", collection: "capture", document: message.body]
+
+          eb.send("vertx.mongopersistor", saveMessage)
+      }
+
       eb.registerHandler("hd13.eventlogger", myHandler);
+      eb.registerHandler("game.capture.state", captureReplayHandler)
   }
 
 }

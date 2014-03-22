@@ -1,5 +1,4 @@
 var canvas;
-var canvaswrapper;
 var ctx;
 
 var drawIntervalInMs = 20;
@@ -16,18 +15,17 @@ var width=50;
 var height=50;
 
 var img = new Image();
-
 var wall = new Image();
 var wood = new Image();
 
 var board;
-
 var lastKey;
 var bombSet = false;
-
 var playerName;
-
 var gameStarted = false;
+var gameId;
+var actuelField;
+var step = 65;
 
 //set an image url
 img.src = "static/img/bomberman_2.gif";
@@ -46,8 +44,10 @@ function init(reply) {
     console.log(jsonString);
 
     var jsonBoard = reply.map;
+    var boardW = jsonBoard.width;
+    var boardH = jsonBoard.height;
 
-    board = new Board(11, 11);
+    board = new Board(boardW, boardH);
 
     for(i=0; i<jsonBoard.felder.length; i++){
         for(j=0; j<jsonBoard.felder[i].length; j++){
@@ -81,6 +81,10 @@ function draw(){
     img.sprite.render(ctx);
     img.sprite.done = true;
     drawsSinceLastUpdate += 1;
+
+    if(gameStarted && (drawsSinceLastUpdate = drawsRequiredForUpdate + 1)){
+        bus.send("game." + playerId + ".move", new PlayerState(lastKey, bombSet));
+    }
 }
 
 function drawBoard(ctx){
@@ -89,7 +93,7 @@ function drawBoard(ctx){
         for(j=0; j<board.tiles[i].length; j++){
             tile = board.tiles[i][j];
             if(tile.image && tile.image.src )
-                ctx.drawImage(tile.image, i*64, j*64);
+                ctx.drawImage(tile.image, i*step, j*step4);
         }
     }
 }
@@ -101,38 +105,40 @@ function handlePressedKey(event) {
     if(!gameStarted)
         return false;
 
-    //left arrow
-    if (event.keyCode == 37 && x > 10) {
-        x-=20;
-        lastKey = "W";
-        img.sprite = createSprite(0, [10, 11, 9], true)
+  //left arrow
+  //var movePossible = stepIsPossible();
+  //if (stepIsPossible) {
+    if (event.keyCode == 37 && x > 10 && stepIsPossible(-1, 0)) {
+      x -= step;
+      lastKey = "W";
+      img.sprite = createSprite(0, [10, 11, 9], true)
     }
     //up arrow
-    else if (event.keyCode == 38 && y > 10) {
-        y-=20;
-        lastKey = "U";
-        img.sprite = createSprite(0, [1, 2, 0], true)
+    else if (event.keyCode == 38 && y > 10 && stepIsPossible(0, -1)) {
+      y -= step;
+      lastKey = "U";
+      img.sprite = createSprite(0, [1, 2, 0], true)
 
     }
     //right_arrow
-    else if (event.keyCode == 39 && x < 640) {
-        x+=20;
-        lastKey = "E";
-        img.sprite = createSprite(0, [4, 5, 3], true)
+    else if (event.keyCode == 39 && x < 640 && stepIsPossible(1, 0)) {
+      x += step;
+      lastKey = "E";
+      img.sprite = createSprite(0, [4, 5, 3], true)
 
     }
     //down_arrow
-    else if (event.keyCode == 40 && y < 640) {
-        y+=20;
-        lastKey = "D";
-        img.sprite = createSprite(0, [7, 8, 6], true)
+    else if (event.keyCode == 40 && y < 640 && stepIsPossible(0, 1)) {
+      y += step;
+      lastKey = "D";
+      img.sprite = createSprite(0, [7, 8, 6], true)
     }
-    //enter
-    else if (event.keyCode == 13 ) {
-        bombSet = true;
-        img.sprite = createSprite(5, [12, 13, 14], true)
-    }
-    return false;
+  //enter
+    else if (event.keyCode == 13) {
+    bombSet = true;
+    img.sprite = createSprite(5, [12, 13, 14], true)
+  }
+  return false;
 }
 
 function focusCanvas() {
@@ -146,3 +152,22 @@ function createSprite(row, frames, playOnce){
 function calcRow(r){
     return r*30;
 }
+
+function stepIsPossible(stepX, stepY) {
+  actuelField = getActuellField();
+  if (jsonBoard.felder[actuelField.xt + stepX][actuelField.yt + stepY] == "W")
+    return false;
+  else return true;
+}
+
+function getActuellField() {
+  var xt = Math.floor(x/step);
+  var yt = Math.floor(y/step);
+  return new Field(xt, yt)
+}
+
+var Field = function(xt, yt) {
+  this.xt = xt;
+  this.yt = yt;
+}
+
