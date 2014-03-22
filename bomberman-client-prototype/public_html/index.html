@@ -10,6 +10,17 @@
          <script type="text/javascript" src="js/libs/sockjs-client/sockjs.min.js"></script>
          <script type="text/javascript" src="js/libs/vertx/vertxbus.js"></script>
          <script type="text/javascript" src="js/libs/jquery/jquery.min.js"></script>
+         <script>
+           var bus = new vertx.EventBus("http://localhost:8080/eventbus");
+           bus.onopen = function(){
+                console.log("bus connection is now open - registering handler for test.address ...");
+
+                bus.registerHandler("hd13.eventlogger", function(message) {
+                    console.log("received a message: " + message);
+
+                   }  );
+       };
+       </script>
        </head>
 
 
@@ -20,9 +31,5 @@
                Your browser doesn't support the HTML5 element canvas.
            </canvas>
        </div>
-       <script>
-           var bus = new vertx.EventBus("http://localhost:8080/eventbus");
-           bus.onopen = "initBus()";
-       </script>
        </body>
 </html>
