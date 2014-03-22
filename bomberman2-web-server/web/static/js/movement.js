@@ -129,7 +129,6 @@ function calcRow(r){
     return r*30;
 }
 
-
 function stepIsPossible(stepX, stepY) {
   actuelField = getActuelField();
   if (jsonBoard.felder[actuelField.xt + stepX][actuelField.yt + stepY] == "W")
