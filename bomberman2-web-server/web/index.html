@@ -49,11 +49,11 @@
             <li id="entry4"></li>
             <li id="entry5"></li>
         </ul>
-        <input type="button" accesskey="S" onclick="bus.publish('state.init', '')" value="Start Game" />
-        <input type="button" accesskey="U" onclick="bus.publish('state.update', 'u')" value="up" />
-        <input type="button" accesskey="D" onclick="bus.publish('state.update', 'd')" value="down" />
-        <input type="button" accesskey="L" onclick="bus.publish('state.update', 'l')" value="left" />
-        <input type="button" accesskey="R" onclick="bus.publish('state.update', 'r')" value="right" />
+        <input type="button" accesskey="S" onclick="bus.send('state.init', '')" value="Start Game" />
+        <input type="button" accesskey="U" onclick="bus.send('state.update', 'u')" value="up" />
+        <input type="button" accesskey="D" onclick="bus.send('state.update', 'd')" value="down" />
+        <input type="button" accesskey="L" onclick="bus.send('state.update', 'l')" value="left" />
+        <input type="button" accesskey="R" onclick="bus.send('state.update', 'r')" value="right" />
         </div>
     </body>
 </html>
