@@ -44,7 +44,7 @@ public class BombermanVerticle extends Verticle {
 //                fullGameWorld.putArray("bombs", new JsonArray((List)platzierteBomben));
 //                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
                 fullGameWorld.putObject("map", spielfeld.toJsonObject());
-                message.reply(fullGameWorld);
+                message.reply("Antwort");
             }
         });
 
