@@ -33,21 +33,34 @@ public class GameWorldVerticle extends Verticle {
 
         container.logger().info("X: deployed GameWorld-Verticle");
 
-        Spieler player = new Spieler("hans");
-        spieler.add(player);
 
-        Spieler player2 = new Spieler("susi");
-        spieler.add(player2);
-
-        // Initialisieren des Spielfeldes
-        erzeugeSpielfeld();
-
-
-        vertx.eventBus().registerHandler("game.initialize", new Handler<Message<String>>() {
+        vertx.eventBus().registerHandler("game.initialize", new Handler<Message<JsonObject>>() {
             @Override
-            public void handle(Message<String> message) {
+            public void handle(Message<JsonObject> message) {
 
                 container.logger().info("X: game.initialize");
+
+                Integer mapWidth = message.body().getInteger("MapWidth");
+                Integer mapHeigth = message.body().getInteger("MapHeight");
+
+                JsonArray playerArray = message.body().getArray("Player");
+
+                if ((playerArray != null) && playerArray.size()>0) {
+                    for (Object playername : playerArray){
+                        spieler.add(new Spieler(playername.toString()));
+                    }
+                } else {
+                    Spieler player = new Spieler("Bomberman");
+                    spieler.add(player);
+                }
+
+                // Initialisieren des Spielfeldes
+                if((mapWidth != null )&&(mapHeigth != null)) {
+                    erzeugeSpielfeld(mapWidth.intValue(), mapHeigth.intValue());
+                } else {
+                    erzeugeSpielfeld();
+                }
+
 
                 JsonObject fullGameWorld = new JsonObject();
                 fullGameWorld.putArray("player", getPlayer());
@@ -175,9 +188,13 @@ public class GameWorldVerticle extends Verticle {
 
     }
 
-    public void erzeugeSpielfeld() {
+        public void erzeugeSpielfeld() {
+            erzeugeSpielfeld(11,11);
+        }
 
-        spielfeld = new Spielfeld(11, 11);
+        public void erzeugeSpielfeld(int sizeX, int SizeY) {
+
+        spielfeld = new Spielfeld(sizeX, SizeY);
 
         spielfeld.setFeld(0,0, Feldart.WAND);
         spielfeld.setFeld(0,0, Feldart.LEER);
