@@ -1,13 +1,8 @@
 var canvas;
 var ctx;
 
-//TODO replace by vert.x callback
-var jsonObject = '{"width":11,"height":11,"felder":[["W","W","W","W","W","W","W","W","W","W","W"],["W","S","S","S","","S","S","","S","S","W"],["W","S","W","S","W","","W","S","W","S","W"],["W","S","S","","S","S","S","S","S","","W"],["W","S","W","","W","S","W","S","W","","W"],["W","S","S","S","S","S","S","S","S","S","W"],["W","S","W","S","W","S","W","","W","S","W"],["W","S","","S","S","S","","S","S","S","W"],["W","S","W","S","W","S","W","S","W","S","W"],["W","","S","S","","S","S","S","S","S","W"],["W","W","W","W","W","W","W","W","W","W","W"]]}';
-var jsonBoard = eval ("(" + jsonObject + ")");
 
 //movement variables
-var my=0;
-var mx=0;
 var x=64;
 var y=64;
 
@@ -21,16 +16,26 @@ var wood = new Image();
 
 var board;
 
+var lastKey;
+var bombSet = false;
+
+
+
 //set an image url
 img.src = "static/img/bomberman_2.gif";
 wall.src = "static/img/wall.png";
 wood.src = "static/img/wood.png";
 
-function init() {
+function init(reply) {
     window.addEventListener("keydown", handlePressedKey, false);
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext('2d');
     timer=setInterval(draw, 200);
+    //log the reply from gameworld
+    var jsonString = JSON.stringify(reply);
+    console.log(jsonString);
+
+    var jsonBoard = reply.map;
 
     board = new Board(11, 11);
 
@@ -79,33 +84,38 @@ function handlePressedKey(event) {
     //left arrow
     if (event.keyCode == 37 && x > 10) {
         x-=20;
+        lastKey = "W";
         img.sprite = createSprite(0, [10, 11, 9], true)
     }
     //up arrow
     else if (event.keyCode == 38 && y > 10) {
         y-=20;
+        lastKey = "U";
         img.sprite = createSprite(0, [1, 2, 0], true)
 
     }
     //right_arrow
     else if (event.keyCode == 39 && x < 640) {
         x+=20;
+        lastKey = "E";
         img.sprite = createSprite(0, [4, 5, 3], true)
 
     }
     //down_arrow
     else if (event.keyCode == 40 && y < 640) {
         y+=20;
+        lastKey = "D";
         img.sprite = createSprite(0, [7, 8, 6], true)
     }
     //enter
     else if (event.keyCode == 13 ) {
+        bombSet = true;
         img.sprite = createSprite(5, [12, 13, 14], true)
     }
 }
 
 function createSprite(row, frames, playOnce){
-     return new Sprite("img/bomberman_2.gif", [0, calcRow(row)], [17.55, 30], 1, frames, "horizontal", playOnce, img);
+     return new Sprite(img.src, [0, calcRow(row)], [17.55, 30], 1, frames, "horizontal", playOnce, img);
 }
 
 function calcRow(r){

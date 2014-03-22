@@ -6,6 +6,7 @@
         <script type="text/javascript" src="static/js/sprite.js"></script>
         <script type="text/javascript" src="static/js/board.js"></script>
         <script type="text/javascript" src="static/js/eventbus.js"></script>
+        <script type="text/javascript" src="static/js/playerState.js"></script>
 
         <script type="text/javascript" src="static/js/libs/sockjs-client/sockjs.min.js"></script>
         <script type="text/javascript" src="static/js/libs/vertx/vertxbus.js"></script>
@@ -16,31 +17,32 @@
             bus.onopen = function() {
                 console.log("bus connection is now open - registering handler for test.address ...");
 
-                bus.registerHandler("hd13.eventlogger", function(message) {
-                    console.log("received a message: " + message);
-
-                });
-
                 bus.registerHandler("state", function(message) {
                     var msg = JSON.stringify(message);
                     console.log("received a message: " + msg);
                     messages = [msg].concat(messages);
                     messages = messages.slice(0, 5);
-                    console.log("received a message: " + messages);
+                    bus.publish('hd13.eventlogger', message);
                     for (i = 0; i < messages.length; i++) {
                         var entryName = "#entry" + (i + 1);
                         var entryValue = messages[i];
                         $(entryName).html(entryValue);
-                        console.log(entryName +":"+ entryValue);
-
                     }
                 });
-            };
+
+            bus.registerHandler("newTurn", function(message, replier){
+                console.log("new turn");
+                replier(JSON.stringify(new PlayerState(lastKey, bombSet)));
+                lastKey = null;
+                bombSet = null;
+            });
+       };
+
         </script>
     </head>
 
 
-    <body onLoad="init();">
+    <body>
         <div>
             <br>
             <canvas id="canvas" width="681" height="701" style="border:1px solid #c3c3c3;">
@@ -56,11 +58,11 @@
             <li id="entry4"></li>
             <li id="entry5"></li>
         </ul>
-        <input type="button" accesskey="S" onclick="bus.publish('state.init', '')" value="Start Game" />
-        <input type="button" accesskey="U" onclick="bus.publish('state.update', 'u')" value="up" />
-        <input type="button" accesskey="D" onclick="bus.publish('state.update', 'd')" value="down" />
-        <input type="button" accesskey="L" onclick="bus.publish('state.update', 'l')" value="left" />
-        <input type="button" accesskey="R" onclick="bus.publish('state.update', 'r')" value="right" />
+        <input type="button" accesskey="S" onclick="bus.send('game.initialize', '', function(reply) {init(reply);})" value="Start Game" />
+        <input type="button" accesskey="U" onclick="bus.send('state.update', 'u')" value="up" />
+        <input type="button" accesskey="D" onclick="bus.send('state.update', 'd')" value="down" />
+        <input type="button" accesskey="L" onclick="bus.send('state.update', 'l')" value="left" />
+        <input type="button" accesskey="R" onclick="bus.send('state.update', 'r')" value="right" />
         </div>
     </body>
 </html>
