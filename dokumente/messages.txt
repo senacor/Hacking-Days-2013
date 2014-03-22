@@ -1,0 +1,18 @@
+Event-Logging
+
+address : hd13.eventlogger
+message : beliebiges JSON Objekt, sollte ein Feld "event-type" besitzen
+hinweis : wird vom Logger noch automatisch um einen Timestamp angereichert
+beispiel:
+
+{
+  "event-type":"http-access",
+  "ip":"127.0.0.1",
+  "resource":"/hd13/board.html"
+}
+
+==============
+
+Data-Store
+
+
