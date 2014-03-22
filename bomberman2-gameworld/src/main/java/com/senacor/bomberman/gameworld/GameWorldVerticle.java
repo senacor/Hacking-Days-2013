@@ -18,6 +18,10 @@ import java.util.Set;
 public class GameWorldVerticle extends Verticle {
 
     public static final String GAME_INIT = "game.initialize";
+    public static final String GAME_UPDATE = "game.update";
+
+    public static final int DEFAULT_MAP_WIDTH = 11;
+    public static final int DEFAULT_MAP_HEIGTH = 11;
 
     /**
      * String = Name of Player
@@ -30,63 +34,46 @@ public class GameWorldVerticle extends Verticle {
     private List<PlacedItem> platzierteItem = new LinkedList<PlacedItem>();
 
     public void start() {
-
-        container.logger().info("X: deployed GameWorld-Verticle");
-
+        container.logger().info("started GameWorldVerticle");
 
         vertx.eventBus().registerHandler("game.initialize", new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> message) {
+                container.logger().info("initializing game");
 
-                JsonObject fullGameWorld = new JsonObject();
+                Integer mapWidth = DEFAULT_MAP_WIDTH;
                 try {
-
-                    container.logger().info("X: game.initialize");
-
-                    Integer mapWidth = message.body().getInteger("MapWidth");
-                    Integer mapHeigth = message.body().getInteger("MapHeight");
-
-                    createPlayerList(message.body());
-
-                    // Initialisieren des Spielfeldes
-                    if ((mapWidth != null) && (mapHeigth != null)) {
-                        erzeugeSpielfeld(mapWidth.intValue(), mapHeigth.intValue());
-                    } else {
-                        erzeugeSpielfeld();
+                    if(message.body().getInteger("MapWidth")!=null){
+                        mapWidth = message.body().getInteger("MapWidth");
                     }
-
-                    fullGameWorld.putArray("player", getPlayer());
-                    fullGameWorld.putArray("bombs", getBombs());
-                    fullGameWorld.putArray("items", getItems());
-                    fullGameWorld.putObject("map", spielfeld.toJsonObject());
-
-                } catch (RuntimeException ex) {
-                    fullGameWorld.putString("error", ex.toString());
+                } catch(NullPointerException e){
+                    //use default
                 }
 
-                message.reply(fullGameWorld);
+                Integer mapHeigth = DEFAULT_MAP_HEIGTH;
+                try {
+                    if(message.body().getInteger("MapHeight")!=null){
+                        mapHeigth = message.body().getInteger("MapHeight");
+                    }
+                } catch(NullPointerException e){
+                    //use default
+                }
+
+                JsonArray playerArray = message.body().getArray("Player");
+
+                initializeGameWorld(mapWidth, mapHeigth, playerArray);
+
+                // reply initial map
+                message.reply(getGameWorldJsonObject());
+
+                // trigger game start.
+                vertx.eventBus().send("game.start", getPlayer());
+
+                container.logger().info("game initialized");
             }
         });
 
-        //Prüfung, ob Name schon vergeben ist und Anlage eines neuen Spielers
-        vertx.eventBus().registerHandler("RegistriereSpieler", new Handler<Message<String>>() {
-            @Override
-            public void handle(Message<String> message) {
-                String nutzername = "";
-                // 1) Prüfe: gibt es schon einen Nutzer mit dem Benutzernamen
-
-                // 2) Spieler anlegen
-
-                spieler.add(new Spieler(nutzername));
-
-                PlatziereSpieler();
-                //???
-                message.reply("OK");
-
-            }
-        });
-
-        vertx.eventBus().registerHandler("Spieleraktionen", new Handler<Message<JsonObject>>() {
+        vertx.eventBus().registerHandler(GAME_UPDATE, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> message) {
 
@@ -116,22 +103,33 @@ public class GameWorldVerticle extends Verticle {
         });
     }
 
-    public void createPlayerList(JsonObject event) {
+    private void initializeGameWorld(Integer mapWidth, Integer mapHeigth, JsonArray playerArray) {
 
-        spieler.removeAll();
-        JsonArray playerArray = event.getArray("Player");
+        createPlayerList(playerArray);
+        createMap(mapWidth.intValue(), mapHeigth.intValue());
+        placePlayersOnTheMap();
+    }
 
-        if ((playerArray != null) && playerArray.size() > 0) {
-            for (Object playername : playerArray) {
+    public void createPlayerList(JsonArray playerArray) {
+        // Add player
+        if ((playerArray != null) && playerArray.size()>0) {
+            for (Object playername : playerArray){
                 spieler.add(new Spieler(playername.toString()));
             }
         } else {
             Spieler player = new Spieler("Bomberman");
             spieler.add(player);
         }
-
     }
 
+    private JsonObject getGameWorldJsonObject() {
+        JsonObject fullGameWorld = new JsonObject();
+        fullGameWorld.putArray("player", getPlayer());
+        fullGameWorld.putArray("bombs", getBombs());
+        fullGameWorld.putArray("items", getItems());
+        fullGameWorld.putObject("map", spielfeld.toJsonObject());
+        return fullGameWorld;
+    }
 
     private JsonArray getItems() {
         JsonArray result = new JsonArray();
@@ -202,11 +200,11 @@ public class GameWorldVerticle extends Verticle {
 
     }
 
-        public void erzeugeSpielfeld() {
-            erzeugeSpielfeld(11,11);
-        }
+    public void erzeugeSpielfeld() {
+        createMap(11, 11);
+    }
 
-        public void erzeugeSpielfeld(int sizeX, int SizeY) {
+    public void createMap(int sizeX, int SizeY) {
 
         spielfeld = new Spielfeld(sizeX, SizeY);
 
@@ -237,12 +235,10 @@ public class GameWorldVerticle extends Verticle {
             }
         }
 
-        //Positioniere Spieler
-        PlatziereSpieler();
     }
 
 
-    public void PlatziereSpieler() {
+    public void placePlayersOnTheMap() {
 
         //Platziere Spieler
         for(Spieler playerToBePlaced: spieler) {
