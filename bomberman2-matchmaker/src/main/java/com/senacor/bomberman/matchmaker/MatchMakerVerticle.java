@@ -29,6 +29,7 @@ public class MatchMakerVerticle extends Verticle {
         vertx.eventBus().registerHandler(MATCHMAKER_PLAYER_REGISTER, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> event) {
+                logEvent(MATCHMAKER_PLAYER_REGISTER);
                 String name = event.body().getString("name");
                 boolean successfullyAdded = playerSet.add(name);
                 event.reply(successfullyAdded);
@@ -38,6 +39,7 @@ public class MatchMakerVerticle extends Verticle {
         vertx.eventBus().registerHandler(MATCHMAKER_PLAYER_UNREGISTER, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> event) {
+                logEvent(MATCHMAKER_PLAYER_UNREGISTER);
                 String name = event.body().getString("name");
                 boolean successfullyRemoved = playerSet.remove(name);
                 event.reply(successfullyRemoved);
@@ -48,11 +50,31 @@ public class MatchMakerVerticle extends Verticle {
         vertx.eventBus().registerHandler(MATCHMAKER_PLAYER_LIST, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> event) {
+                logEvent(MATCHMAKER_PLAYER_LIST);
                 String[] playerArray = playerSet.toArray(new String[0]);
                 event.reply(new JsonArray(playerArray));
             }
         });
 
 
+        vertx.eventBus().registerHandler("ping", new Handler<Message>() {
+            @Override
+            public void handle(Message event) {
+                container.logger().info("ping!!!");
+            }
+        });
+
+        // Test startup
+        vertx.eventBus().send(MATCHMAKER_PLAYER_LIST, new JsonObject());
+
+        System.out.println("bla");
+    }
+
+
+    private void logEvent(String type) {
+        System.out.println("event occurred: " + type);
+        container.logger().info("event occurred: " + type);
+        vertx.eventBus().send("hd13.eventlogger", new JsonObject()
+                .putString("event-type", type));
     }
 }
