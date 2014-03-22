@@ -41,6 +41,8 @@ public class GameWorldVerticle extends Verticle {
             public void handle(Message<JsonObject> message) {
                 container.logger().info("initializing game");
 
+                clearGameData();
+
                 Integer mapWidth = DEFAULT_MAP_WIDTH;
                 try {
                     if(message.body().getInteger("MapWidth")!=null){
@@ -103,8 +105,13 @@ public class GameWorldVerticle extends Verticle {
         });
     }
 
-    private void initializeGameWorld(Integer mapWidth, Integer mapHeigth, JsonArray playerArray) {
+    void clearGameData() {
+        spieler.clear();
+        platzierteBomben.clear();
+        platzierteItem.clear();
+    }
 
+    private void initializeGameWorld(Integer mapWidth, Integer mapHeigth, JsonArray playerArray) {
         createPlayerList(playerArray);
         createMap(mapWidth.intValue(), mapHeigth.intValue());
         placePlayersOnTheMap();
@@ -122,7 +129,8 @@ public class GameWorldVerticle extends Verticle {
         }
     }
 
-    private JsonObject getGameWorldJsonObject() {
+
+        private JsonObject getGameWorldJsonObject() {
         JsonObject fullGameWorld = new JsonObject();
         fullGameWorld.putArray("player", getPlayer());
         fullGameWorld.putArray("bombs", getBombs());
