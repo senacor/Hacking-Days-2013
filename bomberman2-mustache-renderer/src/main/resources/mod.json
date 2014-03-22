@@ -1,6 +1,6 @@
 {
 
-  "main":"groovy:de.codepitbull.javaland.mustache.MustacheRendererVerticle",
+  "main":"groovy:com.senacor.hackingdays.bomberman2.mustache.MustacheRendererVerticle",
 
   "description":"Module to control slaves",
   "licenses": ["The Apache Software License Version 2.0"],
