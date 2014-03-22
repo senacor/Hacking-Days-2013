@@ -27,6 +27,7 @@ var bombSet = false;
 
 var playerName;
 
+var gameStarted = false;
 
 //set an image url
 img.src = "static/img/bomberman_2.gif";
@@ -96,6 +97,8 @@ function drawBoard(ctx){
 function handlePressedKey(event) {
 	event.preventDefault();
     if(!img.sprite.done)
+        return false;
+    if(!gameStarted)
         return false;
 
     //left arrow

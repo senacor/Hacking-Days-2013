@@ -16,6 +16,7 @@
            var bus = new vertx.EventBus("http://localhost:8080/eventbus");
            var messages = [];
            var initInfo = new InitInfo(["Player11"], 11, 11);
+           var playerName = "Player11";
 
             bus.onopen = function() {
                 console.log("bus connection is now open - registering handler for test.address ...");
@@ -33,11 +34,12 @@
                     }
                 });
 
-            bus.registerHandler("newTurn", function(message, replier){
-                console.log("new turn");
-                replier(JSON.stringify(new PlayerState(lastKey, bombSet)));
-                lastKey = null;
-                bombSet = null;
+            bus.registerHandler(playerName + ".start", function(message){
+                console.log("game start");
+                gameStarted = true;
+                lastKey = "";
+                bombSet = false;
+                drawsSinceLastUpdate = 0;
             });
             
             bus.registerHandler("chatmessage.toclient", function(message) {
