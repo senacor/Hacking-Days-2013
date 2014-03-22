@@ -105,7 +105,7 @@ function handlePressedKey(event) {
 }
 
 function createSprite(row, frames, playOnce){
-     return new Sprite("img/bomberman_2.gif", [0, calcRow(row)], [17.55, 30], 1, frames, "horizontal", playOnce);
+     return new Sprite("img/bomberman_2.gif", [0, calcRow(row)], [17.55, 30], 1, frames, "horizontal", playOnce, img);
 }
 
 function calcRow(r){

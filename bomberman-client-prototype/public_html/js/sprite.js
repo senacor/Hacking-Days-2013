@@ -1,5 +1,5 @@
 (function() {
-    function Sprite(url, pos, size, speed, frames, dir, once) {
+    function Sprite(url, pos, size, speed, frames, dir, once, img) {
         this.pos = pos;
         this.size = size;
         this.speed = typeof speed === 'number' ? speed : 0;
@@ -10,6 +10,7 @@
         this.once = once;
         this.canvasPos = [0, 0];
         this.done = !once;
+        this.img = img;
     };
 
     Sprite.prototype = {
@@ -39,10 +40,7 @@
 
             x += frame * this.size[0];
 
-            img2 = new Image();
-            img2.src = "img/bomberman_2.gif";
-
-            ctx.drawImage(img2,
+            ctx.drawImage(this.img,
                           x, y,
                           this.size[0], this.size[1],
                           this.canvasPos[0], this.canvasPos[1],
