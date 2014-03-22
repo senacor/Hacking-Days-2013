@@ -56,7 +56,7 @@ public class Spielfeld {
         JsonObject jsonObject = new JsonObject();
         jsonObject.putNumber("width", width);
         jsonObject.putNumber("height", height);
-        //jsonObject.putArray("felder", new JsonArray(felder));
+        jsonObject.putArray("felder", new JsonArray(felder));
         return jsonObject;
     }
 }
