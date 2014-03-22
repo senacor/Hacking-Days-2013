@@ -104,6 +104,7 @@ public class GameWorldVerticle extends Verticle {
     }
 
     private void initializeGameWorld(Integer mapWidth, Integer mapHeigth, JsonArray playerArray) {
+        // Add player
         if ((playerArray != null) && playerArray.size()>0) {
             for (Object playername : playerArray){
                 spieler.add(new Spieler(playername.toString()));
@@ -113,8 +114,9 @@ public class GameWorldVerticle extends Verticle {
             spieler.add(player);
         }
 
-        // Initialisieren des Spielfeldes
-        erzeugeSpielfeld(mapWidth.intValue(), mapHeigth.intValue());
+        createMap(mapWidth.intValue(), mapHeigth.intValue());
+
+        placePlayersOnTheMap();
     }
 
     private JsonObject getGameWorldJsonObject() {
@@ -196,10 +198,10 @@ public class GameWorldVerticle extends Verticle {
     }
 
     public void erzeugeSpielfeld() {
-        erzeugeSpielfeld(11,11);
+        createMap(11, 11);
     }
 
-    public void erzeugeSpielfeld(int sizeX, int SizeY) {
+    public void createMap(int sizeX, int SizeY) {
 
         spielfeld = new Spielfeld(sizeX, SizeY);
 
@@ -230,12 +232,10 @@ public class GameWorldVerticle extends Verticle {
             }
         }
 
-        //Positioniere Spieler
-        platziereSpieler();
     }
 
 
-    public void platziereSpieler() {
+    public void placePlayersOnTheMap() {
 
         //Platziere Spieler
         for(Spieler playerToBePlaced: spieler) {
