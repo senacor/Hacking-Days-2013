@@ -27,7 +27,7 @@ public class GameWorldVerticle extends Verticle {
     private Spielfeld spielfeld;
     private List<Spieler> spieler = new LinkedList<Spieler>();
     private List<PlacedBomb> platzierteBomben = new LinkedList<PlacedBomb>();
-    private List<PlacedItem> platzierteItem = new LinkedList<PlacedItem>();;
+    private List<PlacedItem> platzierteItem = new LinkedList<PlacedItem>();
 
     public void start() {
 
@@ -54,7 +54,7 @@ public class GameWorldVerticle extends Verticle {
 //                fullGameWorld.putArray("bombs", new JsonArray((List)platzierteBomben));
 //                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
                 fullGameWorld.putObject("map", spielfeld.toJsonObject());
-                message.reply("Antwort");
+                message.reply(fullGameWorld);
             }
         });
 
