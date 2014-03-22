@@ -8,6 +8,7 @@ import org.vertx.java.core.json.JsonObject;
 public class Spieler {
     private String playerName;
     private Position position;
+    private Position targetPosition;
     private int geschwindigkeitsfaktor;
     private int bombenanzahl;
     private int bombenreichweite;
@@ -86,4 +87,14 @@ public class Spieler {
     public boolean isMoving(){
         return timeSliceFinishingMovement > 0;
     }
+
+    public void reachTargetField(){
+        this.position = targetPosition;
+        this.setTimeSliceReachingNextField(0);
+    };
+
+    public void finishMovement(){
+        targetPosition = null;
+        this.setTimeSliceFinishingMovement(0);
+    };
 }
