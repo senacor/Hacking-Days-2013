@@ -3,7 +3,6 @@ import org.vertx.groovy.core.eventbus.EventBus;
 import org.vertx.groovy.core.eventbus.Message;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.groovy.platform.Verticle;
-import org.vertx.groovy.core.Vertx;
 
 
 class EventLogger extends Verticle {
@@ -16,7 +15,12 @@ class EventLogger extends Verticle {
       def username = container.env["OPENSHIFT_MONGODB_DB_USERNAME"];
       def password = container.env["OPENSHIFT_MONGODB_DB_PASSWORD"];
 
-      // If Verticle is not deployed in Openshift...
+
+      println("port = " + port);
+      println("host = " + host);
+      println("username = " + username);
+      println("password = " + password);
+
       host = host == null ? "192.168.1.137" : host;
       port = port == null ? 27017 : port;
 
@@ -43,8 +47,25 @@ class EventLogger extends Verticle {
           eb.send("vertx.mongopersistor", saveMessage)
       }
 
+      def findHandler = { message ->
+          println("found some data: "+message);
+      }
+
+      def replayHandler = { message ->
+          def roundcounter = message.body["roundcounter"];
+          println("replaying starting with roundcounter "+roundcounter+" ...");
+          def findMessage = [
+                  action: "find",
+                  collection: "capture",
+                  matcher: "{ roundcouter: { $gt: "+roundcounter+" } }"
+          ];
+          eb.send("vertx.mongopersistor", findMessage, findHandler);
+      }
+
       eb.registerHandler("hd13.eventlogger", myHandler);
+
       eb.registerHandler("game.capture.state", captureReplayHandler)
+      eb.registerHandler("game.replay.state", replayHandler);
   }
 
 }
