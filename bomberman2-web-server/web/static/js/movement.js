@@ -8,8 +8,8 @@ var jsonBoard = eval ("(" + jsonObject + ")");
 //movement variables
 var my=0;
 var mx=0;
-var x=64;
-var y=64;
+var x=75;
+var y=65;
 
 var width=50;
 var height=50;
@@ -35,7 +35,10 @@ function init() {
     ctx = canvas.getContext('2d');
     timer=setInterval(draw, 200);
 
-    board = new Board(11, 11);
+    var boardW = jsonBoard.width;
+    var boardH = jsonBoard.height;
+
+    board = new Board(boardW, boardH);
 
     for(i=0; i<jsonBoard.felder.length; i++){
         for(j=0; j<jsonBoard.felder[i].length; j++){
@@ -79,8 +82,7 @@ function handlePressedKey(event) {
     if(!img.sprite.done)
         return;
 
-    var step = 60;
-
+    var step = 65;
     //left arrow
     if (event.keyCode == 37 && x > 10) {
         x-=step;
@@ -121,3 +123,4 @@ function createSprite(row, frames, playOnce){
 function calcRow(r){
     return r*30;
 }
+
