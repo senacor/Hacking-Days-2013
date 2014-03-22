@@ -16,6 +16,7 @@ package com.senacor.bm.services;/*
  * @author <a href="http://tfox.org">Tim Fox</a>
  */
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
@@ -33,6 +34,7 @@ import static org.vertx.testtools.VertxAssert.*;
  *
  * This test demonstrates how to do that.
  */
+@Ignore
 public class BombermanVerticleIntegrationTest extends TestVerticle {
 
   @Test
@@ -61,7 +63,7 @@ public class BombermanVerticleIntegrationTest extends TestVerticle {
   }
 
 
-  @Override
+  @Override 
   public void start() {
     // Make sure we call initialize() - this sets up the assert stuff so assert functionality works correctly
     initialize();
