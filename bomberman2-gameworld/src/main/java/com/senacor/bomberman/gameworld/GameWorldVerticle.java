@@ -50,9 +50,9 @@ public class GameWorldVerticle extends Verticle {
                 container.logger().info("X: game.initialize");
 
                 JsonObject fullGameWorld = new JsonObject();
-//                fullGameWorld.putArray("player", new JsonArray((List)spieler));
-//                fullGameWorld.putArray("bombs", new JsonArray((List)platzierteBomben));
-//                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
+                fullGameWorld.putArray("player", getPlayer());
+                fullGameWorld.putArray("bombs", getBombs());
+                fullGameWorld.putArray("items", getItems());
                 fullGameWorld.putObject("map", spielfeld.toJsonObject());
                 message.reply(fullGameWorld);
             }
@@ -104,6 +104,30 @@ public class GameWorldVerticle extends Verticle {
 
             }
         });
+    }
+
+    private JsonArray getItems() {
+        JsonArray result = new JsonArray();
+        for(PlacedItem i : platzierteItem){
+            result.add(i.toJsonObject());
+        }
+        return result;
+    }
+
+    private JsonArray getBombs() {
+        JsonArray result = new JsonArray();
+        for(PlacedBomb b : platzierteBomben){
+            result.add(b.toJsonObject());
+        }
+        return result;
+    }
+
+    private JsonArray getPlayer() {
+        JsonArray result = new JsonArray();
+        for(Spieler p : spieler){
+            result.add(p.toJsonObject());
+        }
+        return result;
     }
 
     public void BewegungSpieler() {
