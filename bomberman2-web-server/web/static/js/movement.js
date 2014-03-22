@@ -21,6 +21,9 @@ var wood = new Image();
 
 var board;
 
+var lastKey;
+var bombSet = false;
+
 //set an image url
 img.src = "static/img/bomberman_2.gif";
 wall.src = "static/img/wall.png";
@@ -79,27 +82,32 @@ function handlePressedKey(event) {
     //left arrow
     if (event.keyCode == 37 && x > 10) {
         x-=20;
+        lastKey = "W";
         img.sprite = createSprite(0, [10, 11, 9], true)
     }
     //up arrow
     else if (event.keyCode == 38 && y > 10) {
         y-=20;
+        lastKey = "U";
         img.sprite = createSprite(0, [1, 2, 0], true)
 
     }
     //right_arrow
     else if (event.keyCode == 39 && x < 640) {
         x+=20;
+        lastKey = "E";
         img.sprite = createSprite(0, [4, 5, 3], true)
 
     }
     //down_arrow
     else if (event.keyCode == 40 && y < 640) {
         y+=20;
+        lastKey = "D";
         img.sprite = createSprite(0, [7, 8, 6], true)
     }
     //enter
     else if (event.keyCode == 13 ) {
+        bombSet = true;
         img.sprite = createSprite(5, [12, 13, 14], true)
     }
 }
