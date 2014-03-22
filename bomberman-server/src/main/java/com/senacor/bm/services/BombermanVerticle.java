@@ -15,36 +15,36 @@ import java.util.*;
 public class BombermanVerticle extends Verticle {
 
     private Spielfeld spielfeld;
-    private List<Spieler> spieler;
-    private List<PlacedBomb> platzierteBomben;
-    private List<PlacedItem> platzierteItem;
+    private List<Spieler> spieler = new LinkedList<Spieler>();
+    private List<PlacedBomb> platzierteBomben = new LinkedList<PlacedBomb>();
+    private List<PlacedItem> platzierteItem = new LinkedList<PlacedItem>();;
 
     public void start() {
 
-        // Initialisieren des Spielfeldes
-        spielfeld = erzeugeSpielfeld();
-        spieler = new LinkedList<Spieler>();
-        platzierteBomben = new LinkedList<PlacedBomb>();
-        platzierteItem = new LinkedList<PlacedItem>();
+        container.logger().info("X: deployed GameWorld-Verticle");
 
         Spieler player = new Spieler("hans");
-        player.setPosition(new Position(2,2));
         spieler.add(player);
 
         Spieler player2 = new Spieler("susi");
-        player2.setPosition(new Position(10,10));
         spieler.add(player2);
+
+        // Initialisieren des Spielfeldes
+        erzeugeSpielfeld();
+
 
         vertx.eventBus().registerHandler("game.map.full", new Handler<Message<String>>() {
             @Override
             public void handle(Message<String> message) {
 
+                container.logger().info("X: game.map.full");
+
                 JsonObject fullGameWorld = new JsonObject();
-                fullGameWorld.putArray("player", new JsonArray((List)spieler));
-                fullGameWorld.putArray("bombs", new JsonArray((List)platzierteBomben));
-                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
+//                fullGameWorld.putArray("player", new JsonArray((List)spieler));
+//                fullGameWorld.putArray("bombs", new JsonArray((List)platzierteBomben));
+//                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
                 fullGameWorld.putObject("map", spielfeld.toJsonObject());
-                message.reply(fullGameWorld);
+                message.reply("Antwort");
             }
         });
 
@@ -96,13 +96,6 @@ public class BombermanVerticle extends Verticle {
         });
     }
 
-    public void PlatziereSpieler() {
-
-        //Platziere Spieler
-
-
-    }
-
     public void BewegungSpieler() {
         // Stelle sicher, dass sich der Spieler nicht bewegt
         // Prüfe ob, Zielposition frei ist (keine Wand und Bombe)
@@ -148,9 +141,9 @@ public class BombermanVerticle extends Verticle {
 
     }
 
-    public Spielfeld erzeugeSpielfeld() {
+    public void erzeugeSpielfeld() {
 
-        Spielfeld spielfeld = new Spielfeld(11, 11);
+        spielfeld = new Spielfeld(11, 11);
 
         spielfeld.setFeld(0,0, Feldart.WAND);
         spielfeld.setFeld(0,0, Feldart.LEER);
@@ -178,6 +171,66 @@ public class BombermanVerticle extends Verticle {
                 }
             }
         }
+
+        //Positioniere Spieler
+        PlatziereSpieler();
+    }
+
+
+    public void PlatziereSpieler() {
+
+        //Platziere Spieler
+        for(Spieler playerToBePlaced: spieler) {
+            boolean playerPositionFound = false;
+            int counter = 0;
+            while (!playerPositionFound && counter < 20) {
+                int posX = (int) Math.round(Math.random() * (spielfeld.getWidth()-2));
+                int posY = (int) Math.round(Math.random() * (spielfeld.getHeight()-2));
+                if(!existPlayerOnStartupPosition(posX, posY) && isPlayerPlacementPossible(posX, posY)) {
+                    makePlayerLocationWalkable(posX, posY);
+                    playerToBePlaced.setPosition(new Position(posX, posY));
+                    playerPositionFound = true;
+                    counter = 0;
+                }
+                counter ++;
+            }
+
+        }
+
+    }
+
+    public boolean existPlayerOnStartupPosition(int posX, int posY){
+        for(Spieler player: spieler) {
+            if((player.getPosition() != null)
+                && (posX == player.getPosition().getX())
+                && (posY == player.getPosition().getY())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isPlayerPlacementPossible(int posX, int posY){
+        int REQUIRED_ACCESSIBLE_FIELDS = 3;
+
+        int counter = 0;
+        counter += (spielfeld.getFeldArt(posX, posY).isPositionForPlayerPlacement())? 1 :0;
+        counter += (spielfeld.getFeldArt(posX+1, posY).isPositionForPlayerPlacement())? 1 :0;
+        counter += (spielfeld.getFeldArt(posX, posY+1).isPositionForPlayerPlacement())? 1 :0;
+        counter += (spielfeld.getFeldArt(posX+1, posY+1).isPositionForPlayerPlacement())? 1 :0;
+
+        return (counter >= REQUIRED_ACCESSIBLE_FIELDS);
+    }
+
+    public void makePlayerLocationWalkable(int posX, int posY){
+
+        spielfeld.makeFieldAccessibleForPlayerPlacement(posX, posY);
+        spielfeld.makeFieldAccessibleForPlayerPlacement(posX+1, posY);
+        spielfeld.makeFieldAccessibleForPlayerPlacement(posX, posY+1);
+        spielfeld.makeFieldAccessibleForPlayerPlacement(posX+1, posY+1);
+    }
+
+    public Spielfeld getSpielfeld() {
         return spielfeld;
     }
 }

@@ -1,1 +1,1 @@
-include 'bomberman2-mustache-renderer', 'bomberman2-web-server', 'bomberman2-aggregator', 'bomberman2-gamestate'
+include 'bomberman2-gameworld', 'bomberman2-mustache-renderer', 'bomberman2-web-server', 'bomberman2-aggregator'

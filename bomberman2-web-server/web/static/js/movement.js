@@ -22,9 +22,9 @@ var wood = new Image();
 var board;
 
 //set an image url
-img.src = "img/bomberman_2.gif";
-wall.src = "img/wall.png";
-wood.src = "img/wood.png";
+img.src = "static/img/bomberman_2.gif";
+wall.src = "static/img/wall.png";
+wood.src = "static/img/wood.png";
 
 function init() {
     window.addEventListener("keydown", handlePressedKey, false);
