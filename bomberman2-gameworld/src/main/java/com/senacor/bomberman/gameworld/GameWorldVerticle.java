@@ -18,6 +18,10 @@ import java.util.Set;
 public class GameWorldVerticle extends Verticle {
 
     public static final String GAME_INIT = "game.initialize";
+    public static final String GAME_UPDATE = "game.update";
+
+    public static final int DEFAULT_MAP_WIDTH = 11;
+    public static final int DEFAULT_MAP_HEIGTH = 11;
 
     /**
      * String = Name of Player
@@ -37,8 +41,24 @@ public class GameWorldVerticle extends Verticle {
             public void handle(Message<JsonObject> message) {
                 container.logger().info("initializing game");
 
-                Integer mapWidth = message.body().getInteger("MapWidth");
-                Integer mapHeigth = message.body().getInteger("MapHeight");
+                Integer mapWidth = DEFAULT_MAP_WIDTH;
+                try {
+                    if(message.body().getInteger("MapWidth")!=null){
+                        mapWidth = message.body().getInteger("MapWidth");
+                    }
+                } catch(NullPointerException e){
+                    //use default
+                }
+
+                Integer mapHeigth = DEFAULT_MAP_HEIGTH;
+                try {
+                    if(message.body().getInteger("MapHeight")!=null){
+                        mapHeigth = message.body().getInteger("MapHeight");
+                    }
+                } catch(NullPointerException e){
+                    //use default
+                }
+
                 JsonArray playerArray = message.body().getArray("Player");
 
                 initializeGameWorld(mapWidth, mapHeigth, playerArray);
@@ -53,25 +73,7 @@ public class GameWorldVerticle extends Verticle {
             }
         });
 
-        //Prüfung, ob Name schon vergeben ist und Anlage eines neuen Spielers
-        vertx.eventBus().registerHandler("RegistriereSpieler", new Handler<Message<String>>() {
-            @Override
-            public void handle(Message<String> message) {
-                String nutzername = "";
-                // 1) Prüfe: gibt es schon einen Nutzer mit dem Benutzernamen
-
-                // 2) Spieler anlegen
-
-                spieler.add(new Spieler(nutzername));
-
-                PlatziereSpieler();
-                //???
-                message.reply("OK");
-
-            }
-        });
-
-        vertx.eventBus().registerHandler("Spieleraktionen", new Handler<Message<JsonObject>>() {
+        vertx.eventBus().registerHandler(GAME_UPDATE, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> message) {
 
@@ -112,11 +114,7 @@ public class GameWorldVerticle extends Verticle {
         }
 
         // Initialisieren des Spielfeldes
-        if((mapWidth != null )&&(mapHeigth != null)) {
-            erzeugeSpielfeld(mapWidth.intValue(), mapHeigth.intValue());
-        } else {
-            erzeugeSpielfeld();
-        }
+        erzeugeSpielfeld(mapWidth.intValue(), mapHeigth.intValue());
     }
 
     private JsonObject getGameWorldJsonObject() {
@@ -233,11 +231,11 @@ public class GameWorldVerticle extends Verticle {
         }
 
         //Positioniere Spieler
-        PlatziereSpieler();
+        platziereSpieler();
     }
 
 
-    public void PlatziereSpieler() {
+    public void platziereSpieler() {
 
         //Platziere Spieler
         for(Spieler playerToBePlaced: spieler) {
