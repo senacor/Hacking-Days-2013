@@ -13,7 +13,7 @@ public class SpielfeldTest {
 
     @Test
     public void testToJsonObject() {
-        Spielfeld feld = (new BombermanVerticle()).createSpielfeld();
+        Spielfeld feld = (new BombermanVerticle()).erzeugeSpielfeld();
 
         JsonObject jsonObject = feld.toJsonObject();
         assertNotNull(jsonObject.getNumber("width"));

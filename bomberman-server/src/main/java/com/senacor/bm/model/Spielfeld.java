@@ -5,8 +5,8 @@ import org.vertx.java.core.json.JsonObject;
 
 public class Spielfeld {
 
-    private int width = 10;
-    private int height = 10;
+    private int width = 11;
+    private int height = 11;
     private String[][] felder;
 
     public Spielfeld(int width, int height) {
