@@ -19,6 +19,33 @@ public class Server extends Verticle {
 
     private static final String WEBROOT = "web/";
 
+    private RouteMatcher createRouteMatcher() {
+        RouteMatcher routeMatcher = new RouteMatcher();
+        routeMatcher.get("/multi", createExampleMultiHandler());
+        routeMatcher.noMatch(createStaticHandler());
+        return routeMatcher;
+    }
+    
+    @Override
+    public void start() {
+
+        final Logger logger = container.logger();
+        HttpServer httpServer = vertx.createHttpServer();
+        httpServer.requestHandler(createRouteMatcher());
+
+        SockJSServer sockJSServer = vertx.createSockJSServer(httpServer);
+        JsonArray permitted = new JsonArray().add(new JsonObject());
+        JsonObject sjsConfig = new JsonObject().putString("prefix", "/eventbus");
+        sockJSServer.bridge(sjsConfig, permitted, permitted);
+        
+        deploySubVerticle(StateVerticle.class);
+        // deploy other Verticles here.
+        
+        httpServer.listen(8080);
+
+        logger.info("web-server deployed");
+    }
+    
     private Handler<HttpServerRequest> createExampleMultiHandler() {
         return new Handler<HttpServerRequest>() {
 
@@ -53,43 +80,15 @@ public class Server extends Verticle {
                 req.response().sendFile(WEBROOT + file);
             }
         };
-    }
+    }    
 
-    private RouteMatcher createRouteMatcher() {
-        RouteMatcher routeMatcher = new RouteMatcher();
-        routeMatcher.get("/multi", createExampleMultiHandler());
-        routeMatcher.noMatch(createStaticHandler());
-        return routeMatcher;
-    }
-
-    @Override
-    public void start() {
-
-        final Logger logger = container.logger();
-        HttpServer httpServer = vertx.createHttpServer();
-        httpServer.requestHandler(createRouteMatcher());
-        
-        SockJSServer sockJSServer = vertx.createSockJSServer(httpServer);
-
-        JsonArray permitted = new JsonArray().add(new JsonObject());
-        JsonObject sjsConfig = new JsonObject().putString("prefix", "/eventbus");
-       
-        sockJSServer.bridge(sjsConfig, permitted, permitted);
-        
-        container.deployVerticle(StateVerticle.class.getCanonicalName(), new Handler<AsyncResult<String>>() {
+    private void deploySubVerticle(final Class<? extends Verticle> verticleClass) {
+        container.deployVerticle(verticleClass.getCanonicalName(), new Handler<AsyncResult<String>>() {
             @Override
             public void handle(AsyncResult<String> event) {
-                logger.info("state verticle deployed: "  + event.succeeded());                
+                String status = event.succeeded() ? "succeeded" : "failed";
+                container.logger().info("Verticle " + verticleClass.getCanonicalName() + " deployment status: " + status);
             }
         });
-
-        httpServer.listen(8080);
-
-//        JsonObject config = new JsonObject();
-//        config.putString("host", "localhost");
-//        config.putNumber("port", 8282);
-//        container.deployModule("io.vertx~mod-web-server~2.0.0-final", config);
-        logger.info("web-server deployed");
-
     }
 }
