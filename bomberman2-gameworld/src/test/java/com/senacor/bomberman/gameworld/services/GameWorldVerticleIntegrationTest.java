@@ -37,7 +37,7 @@ public class GameWorldVerticleIntegrationTest extends TestVerticle {
   public void testEventErmittleSpielfeld() {
 
     container.logger().info("send event: game.initialize");
-    vertx.eventBus().send(GAME_INIT, "???", new Handler<Message<JsonObject>>() {
+    vertx.eventBus().send(GAME_INIT, new JsonObject(), new Handler<Message<JsonObject>>() {
       @Override
       public void handle(Message<JsonObject> reply) {
           JsonObject map = reply.body();
