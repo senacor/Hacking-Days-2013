@@ -1,6 +1,6 @@
 package com.senacor.bm.model;
 
-import com.senacor.bm.services.CreateSpielfeldVerticle;
+import com.senacor.bm.services.BombermanVerticle;
 import org.junit.Test;
 import org.vertx.java.core.json.JsonObject;
 
@@ -13,7 +13,7 @@ public class SpielfeldTest {
 
     @Test
     public void testToJsonObject() {
-        Spielfeld feld = (new CreateSpielfeldVerticle()).createSpielfeld();
+        Spielfeld feld = (new BombermanVerticle()).createSpielfeld();
 
         JsonObject jsonObject = feld.toJsonObject();
         assertNotNull(jsonObject.getNumber("width"));
