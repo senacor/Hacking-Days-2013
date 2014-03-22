@@ -80,6 +80,7 @@ public class GameWorldVerticle extends Verticle {
             public void handle(Message<JsonObject> message) {
 
                 //Zeitabschnitt aus und Prüfe
+                int currentTimeSlice=0;
 
                 //Bewegungen abshließen
 
