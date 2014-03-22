@@ -50,9 +50,9 @@ function init(reply) {
     var jsonString = JSON.stringify(reply);
     console.log(jsonString);
 
+    var jsonBoard = reply.map;
     var boardW = jsonBoard.width;
     var boardH = jsonBoard.height;
-    var jsonBoard = reply.map;
 
     board = new Board(boardW, boardH);
 
@@ -89,7 +89,7 @@ function draw(){
     img.sprite.done = true;
     drawsSinceLastUpdate += 1;
 
-    if(gameStarted && drawsSinceLastUpdate = drawsRequiredForUpdate + 1){
+    if(gameStarted && (drawsSinceLastUpdate = drawsRequiredForUpdate + 1)){
         bus.send("game." + playerId + ".move", new PlayerState(lastKey, bombSet));
     }
 }
