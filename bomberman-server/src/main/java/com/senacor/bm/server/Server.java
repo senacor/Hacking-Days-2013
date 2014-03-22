@@ -14,6 +14,7 @@ import org.vertx.java.platform.Verticle;
 import com.senacor.bm.server.multimessagehandler.ResultCollectingHandler;
 import com.senacor.bm.server.multimessagehandler.ResultConcatenatingHandler;
 import com.senacor.bm.server.multimessagehandler.ResultKeepingHandler;
+import com.senacor.bm.services.BombermanVerticle;
 
 public class Server extends Verticle {
 
@@ -39,6 +40,7 @@ public class Server extends Verticle {
         sockJSServer.bridge(sjsConfig, permitted, permitted);
         
         deploySubVerticle(StateVerticle.class);
+        deploySubVerticle(BombermanVerticle.class);
         // deploy other Verticles here.
         
         httpServer.listen(8080);
