@@ -7,6 +7,7 @@
         <script type="text/javascript" src="static/js/board.js"></script>
         <script type="text/javascript" src="static/js/eventbus.js"></script>
         <script type="text/javascript" src="static/js/playerState.js"></script>
+        <script type="text/javascript" src="static/js/initInfo.js"></script>
 
         <script type="text/javascript" src="static/js/libs/sockjs-client/sockjs.min.js"></script>
         <script type="text/javascript" src="static/js/libs/vertx/vertxbus.js"></script>
@@ -14,6 +15,9 @@
         <script>
            var bus = new vertx.EventBus("http://localhost:8080/eventbus");
            var messages = [];
+           var initInfo = new InitInfo(["Player11"], 11, 11);
+           var playerName = "Player11";
+
             bus.onopen = function() {
                 console.log("bus connection is now open - registering handler for test.address ...");
 
@@ -30,11 +34,12 @@
                     }
                 });
 
-            bus.registerHandler("newTurn", function(message, replier){
-                console.log("new turn");
-                replier(JSON.stringify(new PlayerState(lastKey, bombSet)));
-                lastKey = null;
-                bombSet = null;
+            bus.registerHandler(playerName + ".start", function(message){
+                console.log("game start");
+                gameStarted = true;
+                lastKey = "";
+                bombSet = false;
+                drawsSinceLastUpdate = 0;
             });
             
             bus.registerHandler("chatmessage.toclient", function(message) {
@@ -82,7 +87,7 @@
             <li id="entry4"></li>
             <li id="entry5"></li>
         </ul>
-        <input type="button" accesskey="S" onclick="bus.send('game.initialize', '', function(reply) {init(reply);})" value="Start Game" />
+        <input type="button" accesskey="S" onclick="bus.send('game.initialize', initInfo , function(reply) {init(reply);})" value="Start Game" />
         <input type="button" accesskey="U" onclick="bus.send('state.update', 'u')" value="up" />
         <input type="button" accesskey="D" onclick="bus.send('state.update', 'd')" value="down" />
         <input type="button" accesskey="L" onclick="bus.send('state.update', 'l')" value="left" />

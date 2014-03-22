@@ -25,7 +25,9 @@ var board;
 var lastKey;
 var bombSet = false;
 
+var playerName;
 
+var gameStarted = false;
 
 //set an image url
 img.src = "static/img/bomberman_2.gif";
@@ -56,9 +58,11 @@ function init(reply) {
         }
     }
 
-    var players = reply.player
-    x *= players[0].position.x
-    y *= players[0].position.y
+    var players = reply.player;
+    x *= players[0].position.x;
+    y *= players[0].position.y;
+
+    playerName = players[0].name;
 
     img.sprite = createSprite(1, [0], true);
 
@@ -93,6 +97,8 @@ function drawBoard(ctx){
 function handlePressedKey(event) {
 	event.preventDefault();
     if(!img.sprite.done)
+        return false;
+    if(!gameStarted)
         return false;
 
     //left arrow
