@@ -83,7 +83,7 @@ function draw(){
     drawsSinceLastUpdate += 1;
 
     if(gameStarted && (drawsSinceLastUpdate === drawsRequiredForUpdate + 1)){
-        bus.send("game." + playerId + ".move", new PlayerState(lastKey, bombSet));
+        bus.send("game." + playerName + ".move", new PlayerState(lastKey, bombSet));
     }
 }
 
@@ -154,10 +154,12 @@ function calcRow(r){
 }
 
 function stepIsPossible(stepX, stepY) {
-  actuelField = getActuellField();
-  if (jsonBoard.felder[actuelField.xt + stepX][actuelField.yt + stepY] == "W")
-    return false;
-  else return true;
+//  actuelField = getActuellField();
+//  if (board.tiles[actuelField.xt + stepX][actuelField.yt + stepY].image == wall)
+//    return false;
+//  else
+
+  return true;
 }
 
 function getActuellField() {

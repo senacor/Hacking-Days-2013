@@ -36,7 +36,7 @@ public class GameWorldVerticle extends Verticle {
     public void start() {
         container.logger().info("started GameWorldVerticle");
 
-        vertx.eventBus().registerHandler("game.initialize", new Handler<Message<JsonObject>>() {
+        vertx.eventBus().registerHandler(GAME_INIT, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> message) {
                 container.logger().info("initializing game");
