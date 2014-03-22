@@ -23,7 +23,7 @@ class LockStepVerticle extends Verticle{
                     player: message.body["player"],
                     command: message.body["command"],
                     roundCounter: roundCounter];
-            println ("gameId:" + gmaeId)
+            println ("gameId:" + gameId)
             println ("player:" + message.body["player"])
             println ("command:" + message.body["command"])
 
@@ -34,7 +34,7 @@ class LockStepVerticle extends Verticle{
                 JsonObject nextroundMessage = new JsonObject()
                 nextroundMessage.putArray("commands", new JsonArray(playNameToCommand))
                 nextroundMessage.putNumber("roundid", roundCounter)
-                participants.each {vertx.eventBus.send(it+".nextround", roundCounter)}
+                participants.each {vertx.eventBus.send(it.get("name")+".nextround", roundCounter)}
                 playNameToCommand.clear()
             }
         })
