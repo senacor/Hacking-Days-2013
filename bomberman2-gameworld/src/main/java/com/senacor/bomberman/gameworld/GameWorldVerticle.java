@@ -18,6 +18,10 @@ import java.util.Set;
 public class GameWorldVerticle extends Verticle {
 
     public static final String GAME_INIT = "game.initialize";
+    public static final String GAME_UPDATE = "game.update";
+
+    public static final int DEFAULT_MAP_WIDTH = 11;
+    public static final int DEFAULT_MAP_HEIGTH = 11;
 
     /**
      * String = Name of Player
@@ -37,8 +41,24 @@ public class GameWorldVerticle extends Verticle {
             public void handle(Message<JsonObject> message) {
                 container.logger().info("initializing game");
 
-                Integer mapWidth = message.body().getInteger("MapWidth");
-                Integer mapHeigth = message.body().getInteger("MapHeight");
+                Integer mapWidth = DEFAULT_MAP_WIDTH;
+                try {
+                    if(message.body().getInteger("MapWidth")!=null){
+                        mapWidth = message.body().getInteger("MapWidth");
+                    }
+                } catch(NullPointerException e){
+                    //use default
+                }
+
+                Integer mapHeigth = DEFAULT_MAP_HEIGTH;
+                try {
+                    if(message.body().getInteger("MapHeight")!=null){
+                        mapHeigth = message.body().getInteger("MapHeight");
+                    }
+                } catch(NullPointerException e){
+                    //use default
+                }
+
                 JsonArray playerArray = message.body().getArray("Player");
 
                 initializeGameWorld(mapWidth, mapHeigth, playerArray);
@@ -53,25 +73,7 @@ public class GameWorldVerticle extends Verticle {
             }
         });
 
-        //Prüfung, ob Name schon vergeben ist und Anlage eines neuen Spielers
-        vertx.eventBus().registerHandler("RegistriereSpieler", new Handler<Message<String>>() {
-            @Override
-            public void handle(Message<String> message) {
-                String nutzername = "";
-                // 1) Prüfe: gibt es schon einen Nutzer mit dem Benutzernamen
-
-                // 2) Spieler anlegen
-
-                spieler.add(new Spieler(nutzername));
-
-                PlatziereSpieler();
-                //???
-                message.reply("OK");
-
-            }
-        });
-
-        vertx.eventBus().registerHandler("Spieleraktionen", new Handler<Message<JsonObject>>() {
+        vertx.eventBus().registerHandler(GAME_UPDATE, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> message) {
 
@@ -102,6 +104,14 @@ public class GameWorldVerticle extends Verticle {
     }
 
     private void initializeGameWorld(Integer mapWidth, Integer mapHeigth, JsonArray playerArray) {
+
+        createPlayerList(playerArray);
+        createMap(mapWidth.intValue(), mapHeigth.intValue());
+        placePlayersOnTheMap();
+    }
+
+    public void createPlayerList(JsonArray playerArray) {
+        // Add player
         if ((playerArray != null) && playerArray.size()>0) {
             for (Object playername : playerArray){
                 spieler.add(new Spieler(playername.toString()));
@@ -109,13 +119,6 @@ public class GameWorldVerticle extends Verticle {
         } else {
             Spieler player = new Spieler("Bomberman");
             spieler.add(player);
-        }
-
-        // Initialisieren des Spielfeldes
-        if((mapWidth != null )&&(mapHeigth != null)) {
-            erzeugeSpielfeld(mapWidth.intValue(), mapHeigth.intValue());
-        } else {
-            erzeugeSpielfeld();
         }
     }
 
@@ -198,10 +201,10 @@ public class GameWorldVerticle extends Verticle {
     }
 
     public void erzeugeSpielfeld() {
-        erzeugeSpielfeld(11,11);
+        createMap(11, 11);
     }
 
-    public void erzeugeSpielfeld(int sizeX, int SizeY) {
+    public void createMap(int sizeX, int SizeY) {
 
         spielfeld = new Spielfeld(sizeX, SizeY);
 
@@ -232,18 +235,16 @@ public class GameWorldVerticle extends Verticle {
             }
         }
 
-        //Positioniere Spieler
-        PlatziereSpieler();
     }
 
 
-    public void PlatziereSpieler() {
+    public void placePlayersOnTheMap() {
 
         //Platziere Spieler
         for(Spieler playerToBePlaced: spieler) {
             boolean playerPositionFound = false;
             int counter = 0;
-            while (!playerPositionFound && counter < 20) {
+            while (!playerPositionFound ) {
                 int posX = (int) Math.round(Math.random() * (spielfeld.getWidth()-2));
                 int posY = (int) Math.round(Math.random() * (spielfeld.getHeight()-2));
                 if(!existPlayerOnStartupPosition(posX, posY) && isPlayerPlacementPossible(posX, posY)) {
@@ -253,6 +254,9 @@ public class GameWorldVerticle extends Verticle {
                     counter = 0;
                 }
                 counter ++;
+                if(counter > 30){
+                    throw new RuntimeException("Spieler konnten nicht positioniert werden");
+                }
             }
 
         }
@@ -283,7 +287,6 @@ public class GameWorldVerticle extends Verticle {
     }
 
     public void makePlayerLocationWalkable(int posX, int posY){
-
         spielfeld.makeFieldAccessibleForPlayerPlacement(posX, posY);
         spielfeld.makeFieldAccessibleForPlayerPlacement(posX+1, posY);
         spielfeld.makeFieldAccessibleForPlayerPlacement(posX, posY+1);
