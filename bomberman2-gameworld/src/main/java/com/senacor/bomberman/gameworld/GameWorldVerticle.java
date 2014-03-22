@@ -68,7 +68,9 @@ public class GameWorldVerticle extends Verticle {
 
                 // trigger game start.
                 JsonObject participants = new JsonObject();
+
                 participants.putArray("participants", getPlayer());
+
                 vertx.eventBus().send("game.start", participants);
 
                 container.logger().info("game initialized");
