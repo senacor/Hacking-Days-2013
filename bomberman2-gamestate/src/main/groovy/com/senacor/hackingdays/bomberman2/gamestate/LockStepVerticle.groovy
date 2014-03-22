@@ -1,6 +1,8 @@
 package com.senacor.hackingdays.bomberman2.gamestate
 
 import org.vertx.groovy.platform.Verticle
+import org.vertx.java.core.json.JsonArray
+import org.vertx.java.core.json.JsonObject
 
 /**
  *
@@ -18,7 +20,11 @@ class LockStepVerticle extends Verticle{
             if(playNameToCommand.size()==participants.size()){
                 roundCounter++
                 playNameToCommand.clear()
+                JsonObject nextroundMessage = new JsonObject()
+                nextroundMessage.putArray("commands", new JsonArray(playNameToCommand))
+                nextroundMessage.putNumber("roundid", roundCounter)
                 participants.each {vertx.eventBus.send(it+".nextround", roundCounter)}
+                playNameToCommand.clear()
             }
         })
     }
