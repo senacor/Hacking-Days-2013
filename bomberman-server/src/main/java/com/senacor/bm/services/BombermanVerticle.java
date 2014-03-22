@@ -1,25 +1,139 @@
 package com.senacor.bm.services;
 
-import com.senacor.bm.model.Feldart;
-import com.senacor.bm.model.Spiel;
-import com.senacor.bm.model.Spielfeld;
+import com.senacor.bm.model.*;
+import org.vertx.java.core.Handler;
+import org.vertx.java.core.eventbus.Message;
+import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.platform.Verticle;
 
+import java.util.*;
+
 /**
- * Created by abremm on 21.03.14.
+ * Created by abremm, mmenzel on 21.03.14.
  */
 public class BombermanVerticle extends Verticle {
 
-    public Spielfeld spielfeld;
+    private Spielfeld spielfeld;
+    private List<Spieler> spieler;
+    private List<PlatzierteBombe> platzierteBomben;
+    private List<PlatziertesItem> platzierteItem;
 
     public void start() {
 
         // Initialisieren des Spielfeldes
-        spielfeld = createSpielfeld();
+        spielfeld = erzeugeSpielfeld();
+        spieler = new LinkedList<Spieler>();
+        platzierteBomben = new LinkedList<PlatzierteBombe>();
+        platzierteItem = new LinkedList<PlatziertesItem>();
+
+        vertx.eventBus().registerHandler("ErmittleSpielfeld", new Handler<Message<JsonObject>>() {
+            @Override
+            public void handle(Message<JsonObject> message) {
+                message.reply(spielfeld.toJsonObject());
+            }
+        });
+
+        //Prüfung, ob Name schon vergeben ist und Anlage eines neuen Spielers
+        vertx.eventBus().registerHandler("RegistriereSpieler", new Handler<Message<String>>() {
+            @Override
+            public void handle(Message<String> message) {
+                String nutzername = "";
+                // 1) Prüfe: gibt es schon einen Nutzer mit dem Benutzernamen
+
+                // 2) Spieler anlegen
+
+                spieler.add(new Spieler(nutzername));
+
+                PlatziereSpieler();
+                //???
+                message.reply("OK");
+
+            }
+        });
+
+        vertx.eventBus().registerHandler("Spieleraktionen", new Handler<Message<JsonObject>>() {
+            @Override
+            public void handle(Message<JsonObject> message) {
+
+                //Zeitabschnitt aus und Prüfe
+
+                //Bewegungen abshließen
+
+                //für alle Bewegungsupdates
+                    BewegungSpieler();
+
+                //für alle bewegenden Nutzer, die fällig sind:
+                    PositionswechselNutzer();
+                    bewegungNutzerAbgeschlossen();
+
+                //Bomben explodieren lassen
+
+                //für alle Bomben, die explodieren müssen
+                explosionBombe();
+
+                //für alle bombenPlatzierungsupdates:
+                platzierungBombe();
+                //setze neuen Zeitabschnitt
+
+                //sendeWorldupdate
+
+            }
+        });
+    }
+
+    public void PlatziereSpieler() {
+
+        //Platziere Spieler
+
 
     }
 
-    public Spielfeld createSpielfeld() {
+    public void BewegungSpieler() {
+        // Stelle sicher, dass sich der Spieler nicht bewegt
+        // Prüfe ob, Zielposition frei ist (keine Wand und Bombe)
+
+        // Broadcast „Spielerbewegung“ für Animation
+
+        // Timer  einstellen (halbe Bewegungszeit): Positionswechsel
+        // Event Positionswechsel
+        // Timer einstellen (volle Bewegungszeit): Bewegung abgeschlossen
+
+    }
+
+    public void PositionswechselNutzer() {
+        // Setze neue Position
+        // Prüfe Feld auf Item
+        //      - Auswertung des Items und Aktualisierung der Nutzerattribute
+        //      - Broadcast  „Item entfernen“
+
+    }
+
+    public void bewegungNutzerAbgeschlossen() {
+        // 	Attribut vom Spieler auf abgeschlossen setzen
+    }
+
+    public void platzierungBombe() {
+        // Prüfe auf Anzahl der Bomben des Spielers
+        // Prüfe, dass es noch keine Bombe an der Position gibt
+        // Setze Timer für Explosion
+        // Event „Bombe explodiert“
+        // Brodacast an alle „Bombe gesetzt“
+    }
+
+    public void explosionBombe() {
+        // Ermittlung betroffener Spieler
+        //	Ermittlung betroffener Bomben
+        //	Ermittlung betroffener Wände
+        //	Aktualisiere Karte
+        //	Generiere Items
+        //	Broadcast „neues Item“
+        //	Broadcast Bombe explodiert
+        //	Setze Timer für Bombenexplosion
+        //	Event Bombe explodiert
+
+    }
+
+    public Spielfeld erzeugeSpielfeld() {
 
         Spielfeld spielfeld = new Spielfeld(11, 11);
 
