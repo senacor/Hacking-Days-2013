@@ -11,7 +11,7 @@ var httpServer = vertx.createHttpServer().requestHandler(function(req) {
        "ip":req.remoteAddress().getAddress().getHostAddress(),
        "url":req.path()
      };
-     vertx.eventBus.send("hd13.eventlogger", reqInfo);
+     vertx.eventBus.publish("hd13.eventlogger", reqInfo);
 
      var file = req.path() === '/' ? 'index.html' : req.path();
      req.response.sendFile('web/' + file);
