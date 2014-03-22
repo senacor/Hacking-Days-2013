@@ -50,8 +50,10 @@ public class StateVerticle extends Verticle {
                 throw new AssertionError("Seltsame bewegung" + move.body());
         }
         //...
-        vertx.eventBus().publish("state", new JsonObject(map));
-        logger.info("Sent updated state" + map);
+                JsonObject msg = new JsonObject(map);
+
+        vertx.eventBus().publish("state", msg);
+        logger.info("Sent updated state" + msg);
       }
     });
 

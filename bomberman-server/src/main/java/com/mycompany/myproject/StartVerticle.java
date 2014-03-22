@@ -42,8 +42,9 @@ public class StartVerticle extends Verticle {
         map.put("x", 0);
         map.put("y", 0);
         //...
-        vertx.eventBus().publish("state", new JsonObject(map));
-        logger.info("Sent initial state:" + map.toString());
+        JsonObject msg = new JsonObject(map);
+        vertx.eventBus().publish("state", msg);
+        logger.info("Sent initial state: " + String.valueOf(msg));
       }
     });
 
