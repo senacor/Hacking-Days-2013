@@ -21,6 +21,8 @@ public class BombermanVerticle extends Verticle {
 
     public void start() {
 
+        container.logger().info("X: deployed GameWorld-Verticle");
+
         Spieler player = new Spieler("hans");
         spieler.add(player);
 
@@ -30,16 +32,19 @@ public class BombermanVerticle extends Verticle {
         // Initialisieren des Spielfeldes
         erzeugeSpielfeld();
 
+
         vertx.eventBus().registerHandler("game.map.full", new Handler<Message<String>>() {
             @Override
             public void handle(Message<String> message) {
 
+                container.logger().info("X: game.map.full");
+
                 JsonObject fullGameWorld = new JsonObject();
-                fullGameWorld.putArray("player", new JsonArray((List)spieler));
-                fullGameWorld.putArray("bombs", new JsonArray((List)platzierteBomben));
-                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
+//                fullGameWorld.putArray("player", new JsonArray((List)spieler));
+//                fullGameWorld.putArray("bombs", new JsonArray((List)platzierteBomben));
+//                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
                 fullGameWorld.putObject("map", spielfeld.toJsonObject());
-                message.reply(fullGameWorld);
+                message.reply("Antwort");
             }
         });
 
