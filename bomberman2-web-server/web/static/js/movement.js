@@ -15,23 +15,16 @@ var width=50;
 var height=50;
 
 var img = new Image();
-
 var wall = new Image();
 var wood = new Image();
 
 var board;
-
 var lastKey;
 var bombSet = false;
-
 var playerName;
-
 var gameStarted = false;
-
 var gameId;
-
 var actuelField;
-
 var step = 65;
 
 //set an image url
@@ -50,9 +43,9 @@ function init(reply) {
     var jsonString = JSON.stringify(reply);
     console.log(jsonString);
 
+    var jsonBoard = reply.map;
     var boardW = jsonBoard.width;
     var boardH = jsonBoard.height;
-    var jsonBoard = reply.map;
 
     board = new Board(boardW, boardH);
 
@@ -89,7 +82,7 @@ function draw(){
     img.sprite.done = true;
     drawsSinceLastUpdate += 1;
 
-    if(gameStarted && drawsSinceLastUpdate = drawsRequiredForUpdate + 1){
+    if(gameStarted && (drawsSinceLastUpdate = drawsRequiredForUpdate + 1)){
         bus.send("game." + playerId + ".move", new PlayerState(lastKey, bombSet));
     }
 }
@@ -100,7 +93,7 @@ function drawBoard(ctx){
         for(j=0; j<board.tiles[i].length; j++){
             tile = board.tiles[i][j];
             if(tile.image && tile.image.src )
-                ctx.drawImage(tile.image, i*64, j*64);
+                ctx.drawImage(tile.image, i*step, j*step4);
         }
     }
 }
