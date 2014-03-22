@@ -17,7 +17,8 @@ public class BombermanVerticleTest {
     public void createSmalSpielfeld() {
 
         BombermanVerticle csv = new BombermanVerticle();
-        Spielfeld spielfeld = csv.erzeugeSpielfeld();
+        csv.erzeugeSpielfeld();
+        Spielfeld spielfeld = csv.getSpielfeld();
 
         for(int i=0; i<spielfeld.getHeight(); i++){
             assertEquals("W", spielfeld.getFeld(0, i));
@@ -33,7 +34,8 @@ public class BombermanVerticleTest {
     @Test
     public void spielfeldIstVollstaendig() {
         BombermanVerticle csv = new BombermanVerticle();
-        Spielfeld spielfeld = csv.erzeugeSpielfeld();
+        csv.erzeugeSpielfeld();
+        Spielfeld spielfeld = csv.getSpielfeld();
 
         for(int i=0; i<spielfeld.getHeight(); i++){
             for(int y=0; y<spielfeld.getWidth(); y++){
