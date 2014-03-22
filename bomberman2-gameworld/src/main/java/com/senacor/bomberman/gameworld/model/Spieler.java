@@ -11,7 +11,8 @@ public class Spieler {
     private int geschwindigkeitsfaktor;
     private int bombenanzahl;
     private int bombenreichweite;
-    private boolean istInBewegung;
+    private int timeSliceFinishingMovement;
+    private int timeSliceReachingNextField;
     private boolean istImSpiel;
 
     private int siege;
@@ -25,6 +26,7 @@ public class Spieler {
         siege = 0;
         niederlagen = 0;
         istImSpiel = false;
+        timeSliceFinishingMovement = 0;
     }
 
     public Position getPosition() {
@@ -63,5 +65,25 @@ public class Spieler {
         pos.putNumber("y", position.getY());
         player.putObject("position", pos);
         return player;
+    }
+
+    public int getTimeSliceFinishingMovement() {
+        return timeSliceFinishingMovement;
+    }
+
+    public void setTimeSliceFinishingMovement(int timeSliceFinishingMovement) {
+        this.timeSliceFinishingMovement = timeSliceFinishingMovement;
+    }
+
+    public int getTimeSliceReachingNextField() {
+        return timeSliceReachingNextField;
+    }
+
+    public void setTimeSliceReachingNextField(int timeSliceReachingNextField) {
+        this.timeSliceReachingNextField = timeSliceReachingNextField;
+    }
+
+    public boolean isMoving(){
+        return timeSliceFinishingMovement > 0;
     }
 }
