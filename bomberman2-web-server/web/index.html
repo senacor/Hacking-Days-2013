@@ -1,16 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap 101 Template</title>
-    <link href="static/bootstrap/css/bootstrap.css" rel="stylesheet">
+<html>
+    <head>
+        <title>Move the bomberman on canvas</title>
+        <script type="text/javascript" src="static/js/movement.js"></script>
+        <script type="text/javascript" src="static/js/sprite.js"></script>
+        <script type="text/javascript" src="static/js/board.js"></script>
+        <script type="text/javascript" src="static/js/eventbus.js"></script>
+        <script type="text/javascript" src="static/js/playerState.js"></script>
 
-    <script data-main="app/event_main" src="static/require.js"></script>
-</head>
-<body>
-<h1>Hello, world!</h1>
-<div id="replaceable"></div>
-</body>
+        <script type="text/javascript" src="static/js/libs/sockjs-client/sockjs.min.js"></script>
+        <script type="text/javascript" src="static/js/libs/vertx/vertxbus.js"></script>
+        <script type="text/javascript" src="static/js/libs/jquery/jquery.min.js"></script>
+        <script>
+           var bus = new vertx.EventBus("http://localhost:8080/eventbus");
+           var messages = [];
+            bus.onopen = function() {
+                console.log("bus connection is now open - registering handler for test.address ...");
+
+                bus.registerHandler("state", function(message) {
+                    var msg = JSON.stringify(message);
+                    console.log("received a message: " + msg);
+                    messages = [msg].concat(messages);
+                    messages = messages.slice(0, 5);
+                    bus.publish('hd13.eventlogger', message);
+                    for (i = 0; i < messages.length; i++) {
+                        var entryName = "#entry" + (i + 1);
+                        var entryValue = messages[i];
+                        $(entryName).html(entryValue);
+                    }
+                });
+
+            bus.registerHandler("newTurn", function(message, replier){
+                console.log("new turn");
+                replier(JSON.stringify(new PlayerState(lastKey, bombSet)));
+                lastKey = null;
+                bombSet = null;
+            });
+       };
+
+        </script>
+    </head>
+
+
+    <body onLoad="init();">
+        <div>
+            <br>
+            <canvas id="canvas" width="681" height="701" style="border:1px solid #c3c3c3;">
+                Your browser doesn't support the HTML5 element canvas.
+            </canvas>
+        </div>
+        <div>
+        <h3>Vert.x clientside bus demo</h3>
+        <ul>
+            <li id="entry1"></li>
+            <li id="entry2"></li>
+            <li id="entry3"></li>
+            <li id="entry4"></li>
+            <li id="entry5"></li>
+        </ul>
+        <input type="button" accesskey="S" onclick="bus.send('state.init', '')" value="Start Game" />
+        <input type="button" accesskey="U" onclick="bus.send('state.update', 'u')" value="up" />
+        <input type="button" accesskey="D" onclick="bus.send('state.update', 'd')" value="down" />
+        <input type="button" accesskey="L" onclick="bus.send('state.update', 'l')" value="left" />
+        <input type="button" accesskey="R" onclick="bus.send('state.update', 'r')" value="right" />
+        </div>
+    </body>
 </html>
