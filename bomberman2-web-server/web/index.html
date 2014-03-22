@@ -6,6 +6,7 @@
         <script type="text/javascript" src="static/js/sprite.js"></script>
         <script type="text/javascript" src="static/js/board.js"></script>
         <script type="text/javascript" src="static/js/eventbus.js"></script>
+        <script type="text/javascript" src="static/js/playerState.js"></script>
 
         <script type="text/javascript" src="static/js/libs/sockjs-client/sockjs.min.js"></script>
         <script type="text/javascript" src="static/js/libs/vertx/vertxbus.js"></script>
@@ -28,7 +29,15 @@
                         $(entryName).html(entryValue);
                     }
                 });
-            };
+
+            bus.registerHandler("newTurn", function(message, replier){
+                console.log("new turn");
+                replier(JSON.stringify(new PlayerState(lastKey, bombSet)));
+                lastKey = null;
+                bombSet = null;
+            });
+       };
+
         </script>
     </head>
 
