@@ -18,11 +18,15 @@ class LockStepVerticle extends Verticle{
         def captureState = [:]
         vertx.eventBus.registerHandler("game."+gameId, { message ->
             playNameToCommand.put(message.body["player"], message.body["command"])
-            captureState[gameId : gameId, player: message.body["player"], command: message.body["command"], 
-                roundCounter: roundCounter);
-            println "gameId:" + gmaeId
-            println "player:" + message.body["player"]
-            println "command:" + message.body["command"]
+
+            captureState = [gameId : gameId,
+                    player: message.body["player"],
+                    command: message.body["command"],
+                    roundCounter: roundCounter];
+            println ("gameId:" + gmaeId)
+            println ("player:" + message.body["player"])
+            println ("command:" + message.body["command"])
+
             if(playNameToCommand.size()==participants.size()){
                 vertx.eventBus.send("game.capture.state", captureState)
                 roundCounter++

@@ -82,7 +82,7 @@ function draw(){
     img.sprite.done = true;
     drawsSinceLastUpdate += 1;
 
-    if(gameStarted && (drawsSinceLastUpdate = drawsRequiredForUpdate + 1)){
+    if(gameStarted && (drawsSinceLastUpdate === drawsRequiredForUpdate + 1)){
         bus.send("game." + playerId + ".move", new PlayerState(lastKey, bombSet));
     }
 }
@@ -93,7 +93,7 @@ function drawBoard(ctx){
         for(j=0; j<board.tiles[i].length; j++){
             tile = board.tiles[i][j];
             if(tile.image && tile.image.src )
-                ctx.drawImage(tile.image, i*step, j*step4);
+                ctx.drawImage(tile.image, i*step, j*step);
         }
     }
 }
