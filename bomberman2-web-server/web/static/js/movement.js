@@ -24,6 +24,10 @@ var board;
 var lastKey;
 var bombSet = false;
 
+var actuelField;
+
+var step = 65;
+
 //set an image url
 img.src = "static/img/bomberman_2.gif";
 wall.src = "static/img/wall.png";
@@ -82,38 +86,39 @@ function handlePressedKey(event) {
     if(!img.sprite.done)
         return;
 
-    var step = 65;
-    //left arrow
-    if (event.keyCode == 37 && x > 10) {
-        x-=step;
-        lastKey = "W";
-        img.sprite = createSprite(0, [10, 11, 9], true)
+  //left arrow
+  //var movePossible = stepIsPossible();
+  //if (stepIsPossible) {
+    if (event.keyCode == 37 && x > 10 && stepIsPossible(-1, 0)) {
+      x -= step;
+      lastKey = "W";
+      img.sprite = createSprite(0, [10, 11, 9], true)
     }
     //up arrow
-    else if (event.keyCode == 38 && y > 10) {
-        y-=step;
-        lastKey = "U";
-        img.sprite = createSprite(0, [1, 2, 0], true)
+    else if (event.keyCode == 38 && y > 10 && stepIsPossible(0, -1)) {
+      y -= step;
+      lastKey = "U";
+      img.sprite = createSprite(0, [1, 2, 0], true)
 
     }
     //right_arrow
-    else if (event.keyCode == 39 && x < 640) {
-        x+=step;
-        lastKey = "E";
-        img.sprite = createSprite(0, [4, 5, 3], true)
+    else if (event.keyCode == 39 && x < 640 && stepIsPossible(1, 0)) {
+      x += step;
+      lastKey = "E";
+      img.sprite = createSprite(0, [4, 5, 3], true)
 
     }
     //down_arrow
-    else if (event.keyCode == 40 && y < 640) {
-        y+=step;
-        lastKey = "D";
-        img.sprite = createSprite(0, [7, 8, 6], true)
+    else if (event.keyCode == 40 && y < 640 && stepIsPossible(0, 1)) {
+      y += step;
+      lastKey = "D";
+      img.sprite = createSprite(0, [7, 8, 6], true)
     }
-    //enter
-    else if (event.keyCode == 13 ) {
-        bombSet = true;
-        img.sprite = createSprite(5, [12, 13, 14], true)
-    }
+  //enter
+    else if (event.keyCode == 13) {
+    bombSet = true;
+    img.sprite = createSprite(5, [12, 13, 14], true)
+  }
 }
 
 function createSprite(row, frames, playOnce){
@@ -122,5 +127,24 @@ function createSprite(row, frames, playOnce){
 
 function calcRow(r){
     return r*30;
+}
+
+
+function stepIsPossible(stepX, stepY) {
+  actuelField = getActuelField();
+  if (jsonBoard.felder[actuelField.xt + stepX][actuelField.yt + stepY] == "W")
+    return false;
+  else return true;
+}
+
+function getActuelField() {
+  var xt = Math.floor(x/step);
+  var yt = Math.floor(y/step);
+  return new Field(xt, yt)
+}
+
+var Field = function(xt, yt) {
+  this.xt = xt;
+  this.yt = yt;
 }
 
