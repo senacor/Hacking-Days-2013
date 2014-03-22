@@ -4,7 +4,7 @@ package com.senacor.bm.model;
  * Created by mmenzel on 21.03.2014.
  */
 public class Spieler {
-    private String spielerId;
+    private String playerName;
     private Position position;
     private int geschwindigkeitsfaktor;
     private int bombenanzahl;
@@ -15,8 +15,8 @@ public class Spieler {
     private int siege;
     private int niederlagen;
 
-    public Spieler(String spielerId) {
-        this.spielerId = spielerId;
+    public Spieler(String playerName) {
+        this.playerName = playerName;
         geschwindigkeitsfaktor = 1;
         bombenanzahl = 1;
         bombenreichweite = 2;
@@ -47,5 +47,9 @@ public class Spieler {
 
     public void setNiederlagen(int niederlagen) {
         this.niederlagen = niederlagen;
+    }
+
+    public String getPlayerName() {
+        return playerName;
     }
 }

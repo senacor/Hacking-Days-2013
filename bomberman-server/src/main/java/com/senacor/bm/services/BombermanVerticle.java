@@ -3,6 +3,7 @@ package com.senacor.bm.services;
 import com.senacor.bm.model.*;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.Message;
+import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.platform.Verticle;
 
@@ -26,12 +27,24 @@ public class BombermanVerticle extends Verticle {
         platzierteBomben = new LinkedList<PlacedBomb>();
         platzierteItem = new LinkedList<PlacedItem>();
 
+        Spieler player = new Spieler("hans");
+        player.setPosition(new Position(2,2));
+        spieler.add(player);
+
+        Spieler player2 = new Spieler("susi");
+        player2.setPosition(new Position(10,10));
+        spieler.add(player2);
+
         vertx.eventBus().registerHandler("game.map.full", new Handler<Message<String>>() {
             @Override
             public void handle(Message<String> message) {
 
-                message.reply(spielfeld.toJsonObject());
-//                vertx.eventBus().publish("game.map.full", spielfeld.toJsonObject());
+                JsonObject fullGameWorld = new JsonObject();
+                fullGameWorld.putArray("player", new JsonArray((List)spieler));
+                fullGameWorld.putArray("bombs", new JsonArray((List)platzierteBomben));
+                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
+                fullGameWorld.putObject("map", spielfeld.toJsonObject());
+                message.reply(fullGameWorld);
             }
         });
 

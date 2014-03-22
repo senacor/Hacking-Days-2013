@@ -38,7 +38,7 @@ public class BombermanVerticleIntegrationTest extends TestVerticle {
       public void handle(Message<JsonObject> reply) {
           JsonObject map = reply.body();
           container.logger().info("received jsonObject: " + map.toString());
-          assertNotNull(map.getNumber("width"));
+          assertNotNull(map.getObject("map").getNumber("width"));
           testComplete();
       }
     });
