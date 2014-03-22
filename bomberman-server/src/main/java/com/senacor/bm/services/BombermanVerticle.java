@@ -8,9 +8,9 @@ import org.vertx.java.platform.Verticle;
 /**
  * Created by abremm on 21.03.14.
  */
-public class CreateSpielfeldVerticle extends Verticle {
+public class BombermanVerticle extends Verticle {
 
-    public static Spielfeld spielfeld;
+    public Spielfeld spielfeld;
 
     public void start() {
 
