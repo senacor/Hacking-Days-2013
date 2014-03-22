@@ -36,7 +36,7 @@ public class GameWorldVerticle extends Verticle {
     public void start() {
         container.logger().info("started GameWorldVerticle");
 
-        vertx.eventBus().registerHandler("game.initialize", new Handler<Message<JsonObject>>() {
+        vertx.eventBus().registerHandler(GAME_INIT, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> message) {
                 container.logger().info("initializing game");
@@ -84,6 +84,7 @@ public class GameWorldVerticle extends Verticle {
             public void handle(Message<JsonObject> message) {
 
                 //Zeitabschnitt aus und Prüfe
+                int currentTimeSlice=0;
 
                 //Bewegungen abshließen
 
@@ -91,8 +92,12 @@ public class GameWorldVerticle extends Verticle {
                 BewegungSpieler();
 
                 //für alle bewegenden Nutzer, die fällig sind:
-                PositionswechselNutzer();
-                bewegungNutzerAbgeschlossen();
+                for(Spieler player: spieler) {
+                   if(player.isMoving()) {
+                       pruefePositionswechselNutzer(player, currentTimeSlice);
+                       pruefeBewegungNutzerAbgeschlossen(player, currentTimeSlice);
+                   }
+                }
 
                 //Bomben explodieren lassen
 
@@ -179,16 +184,21 @@ public class GameWorldVerticle extends Verticle {
 
     }
 
-    public void PositionswechselNutzer() {
-        // Setze neue Position
-        // Prüfe Feld auf Item
-        //      - Auswertung des Items und Aktualisierung der Nutzerattribute
-        //      - Broadcast  „Item entfernen“
+    public void pruefePositionswechselNutzer(Spieler player, int currentTimeSlice) {
+        if(player.getTimeSliceReachingNextField() == currentTimeSlice) {
+            player.reachTargetField();
+
+            // Prüfe Feld auf Item
+            //      - Auswertung des Items und Aktualisierung der Nutzerattribute
+            //      - Broadcast  „Item entfernen“
+        }
 
     }
 
-    public void bewegungNutzerAbgeschlossen() {
-        // 	Attribut vom Spieler auf abgeschlossen setzen
+    public void pruefeBewegungNutzerAbgeschlossen(Spieler player, int currentTimeSlice) {
+        if (player.getTimeSliceFinishingMovement() == currentTimeSlice) {
+            player.finishMovement();
+        }
     }
 
     public void platzierungBombe() {
@@ -259,7 +269,7 @@ public class GameWorldVerticle extends Verticle {
             while (!playerPositionFound ) {
                 int posX = (int) Math.round(Math.random() * (spielfeld.getWidth()-2));
                 int posY = (int) Math.round(Math.random() * (spielfeld.getHeight()-2));
-                if(!existPlayerOnStartupPosition(posX, posY) && isPlayerPlacementPossible(posX, posY)) {
+                if(!existPlayerOnStartupPosition(posX, posY) && isFieldAccessable(posX, posY) && isPlayerPlacementPossible(posX, posY)) {
                     makePlayerLocationWalkable(posX, posY);
                     playerToBePlaced.setPosition(new Position(posX, posY));
                     playerPositionFound = true;
@@ -284,6 +294,10 @@ public class GameWorldVerticle extends Verticle {
             }
         }
         return false;
+    }
+
+    public boolean isFieldAccessable(int posX, int posY) {
+        return spielfeld.getFeldArt(posX, posY).isAccessible();
     }
 
     public boolean isPlayerPlacementPossible(int posX, int posY){

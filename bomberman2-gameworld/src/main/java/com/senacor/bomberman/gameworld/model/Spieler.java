@@ -8,10 +8,12 @@ import org.vertx.java.core.json.JsonObject;
 public class Spieler {
     private String playerName;
     private Position position;
+    private Position targetPosition;
     private int geschwindigkeitsfaktor;
     private int bombenanzahl;
     private int bombenreichweite;
-    private boolean istInBewegung;
+    private int timeSliceFinishingMovement;
+    private int timeSliceReachingNextField;
     private boolean istImSpiel;
 
     private int siege;
@@ -25,6 +27,7 @@ public class Spieler {
         siege = 0;
         niederlagen = 0;
         istImSpiel = false;
+        timeSliceFinishingMovement = 0;
     }
 
     public Position getPosition() {
@@ -64,4 +67,34 @@ public class Spieler {
         player.putObject("position", pos);
         return player;
     }
+
+    public int getTimeSliceFinishingMovement() {
+        return timeSliceFinishingMovement;
+    }
+
+    public void setTimeSliceFinishingMovement(int timeSliceFinishingMovement) {
+        this.timeSliceFinishingMovement = timeSliceFinishingMovement;
+    }
+
+    public int getTimeSliceReachingNextField() {
+        return timeSliceReachingNextField;
+    }
+
+    public void setTimeSliceReachingNextField(int timeSliceReachingNextField) {
+        this.timeSliceReachingNextField = timeSliceReachingNextField;
+    }
+
+    public boolean isMoving(){
+        return timeSliceFinishingMovement > 0;
+    }
+
+    public void reachTargetField(){
+        this.position = targetPosition;
+        this.setTimeSliceReachingNextField(0);
+    };
+
+    public void finishMovement(){
+        targetPosition = null;
+        this.setTimeSliceFinishingMovement(0);
+    };
 }
