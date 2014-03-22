@@ -30,44 +30,26 @@ public class GameWorldVerticle extends Verticle {
     private List<PlacedItem> platzierteItem = new LinkedList<PlacedItem>();
 
     public void start() {
-
-        container.logger().info("X: deployed GameWorld-Verticle");
-
+        container.logger().info("started GameWorldVerticle");
 
         vertx.eventBus().registerHandler("game.initialize", new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> message) {
-
-                container.logger().info("X: game.initialize");
+                container.logger().info("initializing game");
 
                 Integer mapWidth = message.body().getInteger("MapWidth");
                 Integer mapHeigth = message.body().getInteger("MapHeight");
-
                 JsonArray playerArray = message.body().getArray("Player");
 
-                if ((playerArray != null) && playerArray.size()>0) {
-                    for (Object playername : playerArray){
-                        spieler.add(new Spieler(playername.toString()));
-                    }
-                } else {
-                    Spieler player = new Spieler("Bomberman");
-                    spieler.add(player);
-                }
+                initializeGameWorld(mapWidth, mapHeigth, playerArray);
 
-                // Initialisieren des Spielfeldes
-                if((mapWidth != null )&&(mapHeigth != null)) {
-                    erzeugeSpielfeld(mapWidth.intValue(), mapHeigth.intValue());
-                } else {
-                    erzeugeSpielfeld();
-                }
+                // reply initial map
+                message.reply(getGameWorldJsonObject());
 
+                // trigger game start.
+                vertx.eventBus().send("game.start", getPlayer());
 
-                JsonObject fullGameWorld = new JsonObject();
-                fullGameWorld.putArray("player", getPlayer());
-                fullGameWorld.putArray("bombs", getBombs());
-                fullGameWorld.putArray("items", getItems());
-                fullGameWorld.putObject("map", spielfeld.toJsonObject());
-                message.reply(fullGameWorld);
+                container.logger().info("game initialized");
             }
         });
 
@@ -117,6 +99,33 @@ public class GameWorldVerticle extends Verticle {
 
             }
         });
+    }
+
+    private void initializeGameWorld(Integer mapWidth, Integer mapHeigth, JsonArray playerArray) {
+        if ((playerArray != null) && playerArray.size()>0) {
+            for (Object playername : playerArray){
+                spieler.add(new Spieler(playername.toString()));
+            }
+        } else {
+            Spieler player = new Spieler("Bomberman");
+            spieler.add(player);
+        }
+
+        // Initialisieren des Spielfeldes
+        if((mapWidth != null )&&(mapHeigth != null)) {
+            erzeugeSpielfeld(mapWidth.intValue(), mapHeigth.intValue());
+        } else {
+            erzeugeSpielfeld();
+        }
+    }
+
+    private JsonObject getGameWorldJsonObject() {
+        JsonObject fullGameWorld = new JsonObject();
+        fullGameWorld.putArray("player", getPlayer());
+        fullGameWorld.putArray("bombs", getBombs());
+        fullGameWorld.putArray("items", getItems());
+        fullGameWorld.putObject("map", spielfeld.toJsonObject());
+        return fullGameWorld;
     }
 
     private JsonArray getItems() {
@@ -188,11 +197,11 @@ public class GameWorldVerticle extends Verticle {
 
     }
 
-        public void erzeugeSpielfeld() {
-            erzeugeSpielfeld(11,11);
-        }
+    public void erzeugeSpielfeld() {
+        erzeugeSpielfeld(11,11);
+    }
 
-        public void erzeugeSpielfeld(int sizeX, int SizeY) {
+    public void erzeugeSpielfeld(int sizeX, int SizeY) {
 
         spielfeld = new Spielfeld(sizeX, SizeY);
 
