@@ -15,23 +15,16 @@ var width=50;
 var height=50;
 
 var img = new Image();
-
 var wall = new Image();
 var wood = new Image();
 
 var board;
-
 var lastKey;
 var bombSet = false;
-
 var playerName;
-
 var gameStarted = false;
-
 var gameId;
-
 var actuelField;
-
 var step = 65;
 
 //set an image url
