@@ -93,7 +93,7 @@ function drawBoard(ctx){
         for(j=0; j<board.tiles[i].length; j++){
             tile = board.tiles[i][j];
             if(tile.image && tile.image.src )
-                ctx.drawImage(tile.image, i*64, j*64);
+                ctx.drawImage(tile.image, i*step, j*step4);
         }
     }
 }
