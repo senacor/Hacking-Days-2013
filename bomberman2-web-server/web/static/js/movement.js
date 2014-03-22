@@ -29,6 +29,8 @@ var playerName;
 
 var gameStarted = false;
 
+var gameId;
+
 //set an image url
 img.src = "static/img/bomberman_2.gif";
 wall.src = "static/img/wall.png";
@@ -81,6 +83,10 @@ function draw(){
     img.sprite.render(ctx);
     img.sprite.done = true;
     drawsSinceLastUpdate += 1;
+
+    if(gameStarted && drawsSinceLastUpdate = drawsRequiredForUpdate + 1){
+        bus.send("game." + playerId + ".move", new PlayerState(lastKey, bombSet));
+    }
 }
 
 function drawBoard(ctx){
