@@ -2,13 +2,8 @@ var canvas;
 var canvaswrapper;
 var ctx;
 
-//TODO replace by vert.x callback
-var jsonObject = '{"width":11,"height":11,"felder":[["W","W","W","W","W","W","W","W","W","W","W"],["W","S","S","S","","S","S","","S","S","W"],["W","S","W","S","W","","W","S","W","S","W"],["W","S","S","","S","S","S","S","S","","W"],["W","S","W","","W","S","W","S","W","","W"],["W","S","S","S","S","S","S","S","S","S","W"],["W","S","W","S","W","S","W","","W","S","W"],["W","S","","S","S","S","","S","S","S","W"],["W","S","W","S","W","S","W","S","W","S","W"],["W","","S","S","","S","S","S","S","S","W"],["W","W","W","W","W","W","W","W","W","W","W"]]}';
-var jsonBoard = eval ("(" + jsonObject + ")");
 
 //movement variables
-var my=0;
-var mx=0;
 var x=64;
 var y=64;
 
@@ -25,18 +20,25 @@ var board;
 var lastKey;
 var bombSet = false;
 
+
+
 //set an image url
 img.src = "static/img/bomberman_2.gif";
 wall.src = "static/img/wall.png";
 wood.src = "static/img/wood.png";
 
-function init() {
+function init(reply) {
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext('2d');
     canvaswrapper = document.getElementById("canvaswrapper");
     canvaswrapper.addEventListener("keydown", handlePressedKey, false);
     canvas.addEventListener("click", focusCanvas, false);
     timer=setInterval(draw, 200);
+    //log the reply from gameworld
+    var jsonString = JSON.stringify(reply);
+    console.log(jsonString);
+
+    var jsonBoard = reply.map;
 
     board = new Board(11, 11);
 

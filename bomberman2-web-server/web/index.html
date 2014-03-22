@@ -57,7 +57,7 @@
     </head>
 
 
-    <body onLoad="init();">
+    <body>
         <div style="clear: both;">
             <br>
             <div id="canvaswrapper" style="float: left;">
@@ -82,7 +82,7 @@
             <li id="entry4"></li>
             <li id="entry5"></li>
         </ul>
-        <input type="button" accesskey="S" onclick="bus.send('state.init', '')" value="Start Game" />
+        <input type="button" accesskey="S" onclick="bus.send('game.initialize', '', function(reply) {init(reply);})" value="Start Game" />
         <input type="button" accesskey="U" onclick="bus.send('state.update', 'u')" value="up" />
         <input type="button" accesskey="D" onclick="bus.send('state.update', 'd')" value="down" />
         <input type="button" accesskey="L" onclick="bus.send('state.update', 'l')" value="left" />
