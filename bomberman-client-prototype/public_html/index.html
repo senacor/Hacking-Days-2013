@@ -14,7 +14,7 @@
            var messages = [];
            bus.onopen = function() {
              console.log("bus connection is now open - registering handler for test.address ...");
-             bus.registerHandler("test.address", function(message) {
+             bus.registerHandler("state", function(message) {
                var msg = JSON.stringify(message);  
                console.log("received a message: " + msg);
                messages = [ msg ].concat(messages);
@@ -37,5 +37,20 @@
                Your browser doesn't support the HTML5 element canvas.
            </canvas>
        </div>
+           
+      <h3>Vert.x clientside bus demo</h3>
+         <ul>
+             <li id="entry1"></li>
+             <li id="entry2"></li>
+             <li id="entry3"></li>
+             <li id="entry4"></li>
+             <li id="entry5"></li>
+          </ul>
+         <input type="button" accesskey="S" onclick="bus.publish('state.init','')" value="Start Game" />
+         <input type="button" accesskey="U" onclick="bus.publish('state.update','u')" value="up" />
+         <input type="button" accesskey="D" onclick="bus.publish('state.update','d')" value="down" />
+         <input type="button" accesskey="L" onclick="bus.publish('state.update','l')" value="left" />
+         <input type="button" accesskey="R" onclick="bus.publish('state.update','r')" value="right" />
+      
        </body>
 </html>
