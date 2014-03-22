@@ -1,4 +1,5 @@
 var canvas;
+var canvaswrapper;
 var ctx;
 
 //TODO replace by vert.x callback
@@ -30,9 +31,11 @@ wall.src = "static/img/wall.png";
 wood.src = "static/img/wood.png";
 
 function init() {
-    window.addEventListener("keydown", handlePressedKey, false);
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext('2d');
+    canvaswrapper = document.getElementById("canvaswrapper");
+    canvaswrapper.addEventListener("keydown", handlePressedKey, false);
+    canvas.addEventListener("click", focusCanvas, false);
     timer=setInterval(draw, 200);
 
     board = new Board(11, 11);
@@ -76,8 +79,9 @@ function drawBoard(ctx){
 }
 
 function handlePressedKey(event) {
+	event.preventDefault();
     if(!img.sprite.done)
-        return;
+        return false;
 
     //left arrow
     if (event.keyCode == 37 && x > 10) {
@@ -110,6 +114,11 @@ function handlePressedKey(event) {
         bombSet = true;
         img.sprite = createSprite(5, [12, 13, 14], true)
     }
+    return false;
+}
+
+function focusCanvas() {
+	canvaswrapper.focus();
 }
 
 function createSprite(row, frames, playOnce){

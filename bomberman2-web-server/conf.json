@@ -1,9 +1,9 @@
 {
-    "port": 9000,
+    "port": 8080,
     "route_matcher": true,
     "static_files": true,
     "bridge": true,
-    "inbound_permitted": [{"address":"web.fullmap"},{"address":"ping"}],
-    "outbound_permitted": [{"address":"web.fullmap"},{"address":"ping"}],
+    "inbound_permitted": [{"address":"web.fullmap"},{"address":"ping"},{"address":"matchmaker.player.list"}, {"address":"matchmaker.player.unregister"}, {"address":"matchmaker.player.register"}, {"address":"chatmessage.toserver"}],
+    "outbound_permitted": [{"address":"web.fullmap"},{"address":"ping"},{"address":"matchmaker.player.list"}, {"address":"matchmaker.player.unregister"}, {"address":"matchmaker.player.register"}, {"address":"chatmessage.toclient"}],
     "web_root": "/Users/jmader/Documents/3_development/vcs/github_pflanzenmoerder/vertx-javaland/web-server/web"
 }

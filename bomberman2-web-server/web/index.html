@@ -36,20 +36,44 @@
                 lastKey = null;
                 bombSet = null;
             });
+            
+            bus.registerHandler("chatmessage.toclient", function(message) {
+                var box = $("#chatlog");
+                box.val(box.val() + message + "\n");
+            });
+            
        };
 
+        </script>
+        
+        <script>
+	        var sendChatMessage = function() {
+	        	var input = $("#chatinput");
+	            var message = input.val();
+	            input.val("");
+	            bus.send("chatmessage.toserver", message);
+	        }
         </script>
     </head>
 
 
     <body onLoad="init();">
-        <div>
+        <div style="clear: both;">
             <br>
-            <canvas id="canvas" width="681" height="701" style="border:1px solid #c3c3c3;">
+            <div id="canvaswrapper" style="float: left;">
+            <canvas tabindex="1" id="canvas" width="681" height="701" style="border:1px solid #c3c3c3;">
                 Your browser doesn't support the HTML5 element canvas.
             </canvas>
+            </div>
+            <div style="float: left;">
+                <form id="chat" onsubmit="sendChatMessage(); return false;" action="#">
+                <b>Chat Log:</b><br />
+                <textarea id="chatlog" rows="20" style="width: 300px;"></textarea><br />
+                <input id="chatinput" type="text" style="width: 300px;" />
+                </form>
+            </div>
         </div>
-        <div>
+        <div style="clear: both;">
         <h3>Vert.x clientside bus demo</h3>
         <ul>
             <li id="entry1"></li>
