@@ -15,16 +15,16 @@ public class BombermanVerticle extends Verticle {
 
     private Spielfeld spielfeld;
     private List<Spieler> spieler;
-    private List<PlatzierteBombe> platzierteBomben;
-    private List<PlatziertesItem> platzierteItem;
+    private List<PlacedBomb> platzierteBomben;
+    private List<PlacedItem> platzierteItem;
 
     public void start() {
 
         // Initialisieren des Spielfeldes
         spielfeld = erzeugeSpielfeld();
         spieler = new LinkedList<Spieler>();
-        platzierteBomben = new LinkedList<PlatzierteBombe>();
-        platzierteItem = new LinkedList<PlatziertesItem>();
+        platzierteBomben = new LinkedList<PlacedBomb>();
+        platzierteItem = new LinkedList<PlacedItem>();
 
         vertx.eventBus().registerHandler("ErmittleSpielfeld", new Handler<Message<JsonObject>>() {
             @Override
