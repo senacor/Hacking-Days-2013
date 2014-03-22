@@ -1,0 +1,1 @@
+bin/vertx runMod de.codepitbull.javaland~mustache-renderer-module~1.0.0-final

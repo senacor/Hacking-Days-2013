@@ -1,0 +1,3 @@
+../classes/production/mustache-renderer/
+build/output/lib/compiler-0.8.14.jar
+build/output/lib/guava-13.0.1.jar
