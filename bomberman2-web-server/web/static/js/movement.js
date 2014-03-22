@@ -25,6 +25,7 @@ var board;
 var lastKey;
 var bombSet = false;
 
+var playerName;
 
 
 //set an image url
@@ -56,9 +57,11 @@ function init(reply) {
         }
     }
 
-    var players = reply.player
-    x *= players[0].position.x
-    y *= players[0].position.y
+    var players = reply.player;
+    x *= players[0].position.x;
+    y *= players[0].position.y;
+
+    playerName = players[0].name;
 
     img.sprite = createSprite(1, [0], true);
 
