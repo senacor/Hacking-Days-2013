@@ -1,15 +1,15 @@
 var canvas;
 var ctx;
 
-//TODO replace by vert.x callback
-var jsonObject = '{"width":11,"height":11,"felder":[["W","W","W","W","W","W","W","W","W","W","W"],["W","","","S","","S","S","","S","S","W"],["W","","W","S","W","","W","S","W","S","W"],["W","S","S","","S","S","S","S","S","","W"],["W","S","W","","W","S","W","S","W","","W"],["W","S","S","S","S","S","S","S","S","S","W"],["W","S","W","S","W","S","W","","W","S","W"],["W","S","","S","S","S","","S","S","S","W"],["W","S","W","S","W","S","W","S","W","S","W"],["W","","S","S","","S","S","S","S","S","W"],["W","W","W","W","W","W","W","W","W","W","W"]]}';
-var jsonBoard = eval ("(" + jsonObject + ")");
+var drawIntervalInMs = 20;
+var turnLengthInMs = 40;
+
+var drawsSinceLastUpdate = 0;
+var drawsRequiredForUpdate = turnLengthInMs/drawIntervalInMs;
 
 //movement variables
-var my=0;
-var mx=0;
-var x=75;
-var y=65;
+var x=64;
+var y=64;
 
 var width=50;
 var height=50;
@@ -24,6 +24,12 @@ var board;
 var lastKey;
 var bombSet = false;
 
+var playerName;
+
+var gameStarted = false;
+
+var gameId;
+
 var actuelField;
 
 var step = 65;
@@ -33,14 +39,20 @@ img.src = "static/img/bomberman_2.gif";
 wall.src = "static/img/wall.png";
 wood.src = "static/img/wood.png";
 
-function init() {
-    window.addEventListener("keydown", handlePressedKey, false);
+function init(reply) {
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext('2d');
-    timer=setInterval(draw, 200);
+    canvaswrapper = document.getElementById("canvaswrapper");
+    canvaswrapper.addEventListener("keydown", handlePressedKey, false);
+    canvas.addEventListener("click", focusCanvas, false);
+    timer = setInterval(draw, drawIntervalInMs);
+    //log the reply from gameworld
+    var jsonString = JSON.stringify(reply);
+    console.log(jsonString);
 
     var boardW = jsonBoard.width;
     var boardH = jsonBoard.height;
+    var jsonBoard = reply.map;
 
     board = new Board(boardW, boardH);
 
@@ -52,6 +64,12 @@ function init() {
                 board.tiles[i][j].image = wood;
         }
     }
+
+    var players = reply.player;
+    x *= players[0].position.x;
+    y *= players[0].position.y;
+
+    playerName = players[0].name;
 
     img.sprite = createSprite(1, [0], true);
 
@@ -69,6 +87,11 @@ function draw(){
     img.sprite.canvasPos = [x, y];
     img.sprite.render(ctx);
     img.sprite.done = true;
+    drawsSinceLastUpdate += 1;
+
+    if(gameStarted && drawsSinceLastUpdate = drawsRequiredForUpdate + 1){
+        bus.send("game." + playerId + ".move", new PlayerState(lastKey, bombSet));
+    }
 }
 
 function drawBoard(ctx){
@@ -83,8 +106,11 @@ function drawBoard(ctx){
 }
 
 function handlePressedKey(event) {
+	event.preventDefault();
     if(!img.sprite.done)
-        return;
+        return false;
+    if(!gameStarted)
+        return false;
 
   //left arrow
   //var movePossible = stepIsPossible();
@@ -119,6 +145,11 @@ function handlePressedKey(event) {
     bombSet = true;
     img.sprite = createSprite(5, [12, 13, 14], true)
   }
+  return false;
+}
+
+function focusCanvas() {
+	canvaswrapper.focus();
 }
 
 function createSprite(row, frames, playOnce){

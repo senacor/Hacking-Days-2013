@@ -7,6 +7,7 @@
         <script type="text/javascript" src="static/js/board.js"></script>
         <script type="text/javascript" src="static/js/eventbus.js"></script>
         <script type="text/javascript" src="static/js/playerState.js"></script>
+        <script type="text/javascript" src="static/js/initInfo.js"></script>
 
         <script type="text/javascript" src="static/js/libs/sockjs-client/sockjs.min.js"></script>
         <script type="text/javascript" src="static/js/libs/vertx/vertxbus.js"></script>
@@ -14,6 +15,9 @@
         <script>
            var bus = new vertx.EventBus("http://localhost:8080/eventbus");
            var messages = [];
+           var initInfo = new InitInfo(["Player11"], 11, 11);
+           var playerName = "Player11";
+
             bus.onopen = function() {
                 console.log("bus connection is now open - registering handler for test.address ...");
 
@@ -30,26 +34,52 @@
                     }
                 });
 
-            bus.registerHandler("newTurn", function(message, replier){
-                console.log("new turn");
-                replier(JSON.stringify(new PlayerState(lastKey, bombSet)));
-                lastKey = null;
-                bombSet = null;
+            bus.registerHandler(playerName + ".start", function(message){
+                console.log("game start");
+                gameId = message;
+                gameStarted = true;
+                lastKey = "";
+                bombSet = false;
+                drawsSinceLastUpdate = 0;
             });
+            
+            bus.registerHandler("chatmessage.toclient", function(message) {
+                var box = $("#chatlog");
+                box.val(box.val() + message + "\n");
+            });
+            
        };
 
+        </script>
+        
+        <script>
+	        var sendChatMessage = function() {
+	        	var input = $("#chatinput");
+	            var message = input.val();
+	            input.val("");
+	            bus.send("chatmessage.toserver", message);
+	        }
         </script>
     </head>
 
 
-    <body onLoad="init();">
-        <div>
+    <body>
+        <div style="clear: both;">
             <br>
-            <canvas id="canvas" width="681" height="701" style="border:1px solid #c3c3c3;">
+            <div id="canvaswrapper" style="float: left;">
+            <canvas tabindex="1" id="canvas" width="681" height="701" style="border:1px solid #c3c3c3;">
                 Your browser doesn't support the HTML5 element canvas.
             </canvas>
+            </div>
+            <div style="float: left;">
+                <form id="chat" onsubmit="sendChatMessage(); return false;" action="#">
+                <b>Chat Log:</b><br />
+                <textarea id="chatlog" rows="20" style="width: 300px;"></textarea><br />
+                <input id="chatinput" type="text" style="width: 300px;" />
+                </form>
+            </div>
         </div>
-        <div>
+        <div style="clear: both;">
         <h3>Vert.x clientside bus demo</h3>
         <ul>
             <li id="entry1"></li>
@@ -58,11 +88,11 @@
             <li id="entry4"></li>
             <li id="entry5"></li>
         </ul>
-        <input type="button" accesskey="S" onclick="bus.publish('state.init', '')" value="Start Game" />
-        <input type="button" accesskey="U" onclick="bus.publish('state.update', 'u')" value="up" />
-        <input type="button" accesskey="D" onclick="bus.publish('state.update', 'd')" value="down" />
-        <input type="button" accesskey="L" onclick="bus.publish('state.update', 'l')" value="left" />
-        <input type="button" accesskey="R" onclick="bus.publish('state.update', 'r')" value="right" />
+        <input type="button" accesskey="S" onclick="bus.send('game.initialize', initInfo , function(reply) {init(reply);})" value="Start Game" />
+        <input type="button" accesskey="U" onclick="bus.send('state.update', 'u')" value="up" />
+        <input type="button" accesskey="D" onclick="bus.send('state.update', 'd')" value="down" />
+        <input type="button" accesskey="L" onclick="bus.send('state.update', 'l')" value="left" />
+        <input type="button" accesskey="R" onclick="bus.send('state.update', 'r')" value="right" />
         </div>
     </body>
 </html>

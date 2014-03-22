@@ -42,7 +42,7 @@ public class BombermanVerticle extends Verticle {
                 JsonObject fullGameWorld = new JsonObject();
 //                fullGameWorld.putArray("player", new JsonArray((List)spieler));
 //                fullGameWorld.putArray("bombs", new JsonArray((List)platzierteBomben));
-                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
+//                fullGameWorld.putArray("items", new JsonArray((List)platzierteItem));
                 fullGameWorld.putObject("map", spielfeld.toJsonObject());
                 message.reply(fullGameWorld);
             }

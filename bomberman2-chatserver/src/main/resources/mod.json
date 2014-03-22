@@ -1,0 +1,14 @@
+{
+
+  "main":"com.senacor.bomberman.chatserver.ChatserverVerticle",
+
+  "description":"Module that provides an in game chat",
+  "licenses": ["The Apache Software License Version 2.0"],
+  "author": "Jochen Mader",
+
+  "keywords": ["chatserver"],
+  "homepage": "",
+
+  "auto-redeploy": true
+
+}
