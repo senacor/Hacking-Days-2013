@@ -1,0 +1,40 @@
+apply from: "gradle/vertx.gradle"
+
+dependencies {
+  provided "org.codehaus.groovy:groovy-all:$groovyVersion"
+  provided "io.vertx:lang-groovy:$groovyLangModVersion@jar"
+}
+
+test {
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.runtime
+}
+build.dependsOn copyToLib
+
+/*
+If you're uploading stuff to Maven, Gradle needs to generate a POM.
+Please edit the details below.
+ */
+def configurePom(def pom) {
+  pom.project {
+    name rootProject.name
+    description 'Bomberman Chatserver'
+    inceptionYear '2014'
+    packaging 'jar'
+
+    developers {
+      developer {
+        id 'easimon'
+        name 'Markus Dobel'
+        email 'markus.dobel@senacor.com'
+      }
+    }
+
+    properties {
+      setProperty('project.build.sourceEncoding', 'UTF8')
+    }
+  }
+}
