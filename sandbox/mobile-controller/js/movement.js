@@ -1,6 +1,10 @@
 var canvas;
 var ctx;
 
+//TODO replace by vert.x callback
+var jsonObject = '{"width":11,"height":11,"felder":[["W","W","W","W","W","W","W","W","W","W","W"],["W","S","S","S","","S","S","","S","S","W"],["W","S","W","S","W","","W","S","W","S","W"],["W","S","S","","S","S","S","S","S","","W"],["W","S","W","","W","S","W","S","W","","W"],["W","S","S","S","S","S","S","S","S","S","W"],["W","S","W","S","W","S","W","","W","S","W"],["W","S","","S","S","S","","S","S","S","W"],["W","S","W","S","W","S","W","S","W","S","W"],["W","","S","S","","S","S","S","S","S","W"],["W","W","W","W","W","W","W","W","W","W","W"]]}';
+var jsonBoard = eval ("(" + jsonObject + ")");
+
 //movement variables
 var my=0;
 var mx=0;
@@ -28,10 +32,16 @@ function init() {
     ctx = canvas.getContext('2d');
     timer=setInterval(draw, 200);
 
-    board = new Board(10, 10);
-    board.tiles[0][0].image = wall;
-    board.tiles[0][1].image = wall;
-    board.tiles[1][0].image = wall;
+    board = new Board(11, 11);
+
+    for(i=0; i<jsonBoard.felder.length; i++){
+        for(j=0; j<jsonBoard.felder[i].length; j++){
+            if(jsonBoard.felder[i][j] == "W")
+                board.tiles[i][j].image = wall;
+            if(jsonBoard.felder[i][j] == "S")
+                board.tiles[i][j].image = wood;
+        }
+    }
 
     img.sprite = createSprite(1, [0], true);
 
@@ -78,13 +88,13 @@ function handlePressedKey(event) {
 
     }
     //right_arrow
-    else if (event.keyCode == 39 && x < 741) {
+    else if (event.keyCode == 39 && x < 640) {
         x+=20;
         img.sprite = createSprite(0, [4, 5, 3], true)
 
     }
     //down_arrow
-    else if (event.keyCode == 40 && y < 721) {
+    else if (event.keyCode == 40 && y < 640) {
         y+=20;
         img.sprite = createSprite(0, [7, 8, 6], true)
     }
