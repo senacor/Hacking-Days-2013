@@ -1,5 +1,8 @@
 apply from: "gradle/vertx.gradle"
 
+sourceCompatibility=1.7
+targetCompatibility=1.7
+
 dependencies {
     provided "org.codehaus.groovy:groovy-all:$groovyVersion"
     provided "io.vertx:lang-groovy:$groovyLangModVersion@jar"
