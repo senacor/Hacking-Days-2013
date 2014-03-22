@@ -6,8 +6,8 @@ package com.senacor.bomberman.gameworld.model;
 public enum Feldart {
 
     LEER ("", false, true, true),
-    WAND ("W", true, false, true),
-    STEIN ("S", false, false, false),
+    WAND ("W", true, false, false),
+    STEIN ("S", false, false, true),
     PORTAL ("P", false, false, false);
 
     private String id;
