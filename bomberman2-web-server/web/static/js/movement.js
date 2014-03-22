@@ -82,7 +82,7 @@ function draw(){
     img.sprite.done = true;
     drawsSinceLastUpdate += 1;
 
-    if(gameStarted && (drawsSinceLastUpdate = drawsRequiredForUpdate + 1)){
+    if(gameStarted && (drawsSinceLastUpdate === drawsRequiredForUpdate + 1)){
         bus.send("game." + playerId + ".move", new PlayerState(lastKey, bombSet));
     }
 }
