@@ -1,5 +1,7 @@
 package com.senacor.bomberman.gameworld.model;
 
+import org.vertx.java.core.json.JsonObject;
+
 /**
  * Created by mmenzel on 21.03.2014.
  */
@@ -26,5 +28,12 @@ public class Position {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public JsonObject toJsonObject() {
+        JsonObject pos = new JsonObject();
+        pos.putNumber("x", getX());
+        pos.putNumber("y", getY());
+        return pos;
     }
 }

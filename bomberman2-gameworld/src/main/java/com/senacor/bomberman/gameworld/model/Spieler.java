@@ -1,5 +1,7 @@
 package com.senacor.bomberman.gameworld.model;
 
+import org.vertx.java.core.json.JsonObject;
+
 /**
  * Created by mmenzel on 21.03.2014.
  */
@@ -51,5 +53,15 @@ public class Spieler {
 
     public String getPlayerName() {
         return playerName;
+    }
+
+    public JsonObject toJsonObject() {
+        JsonObject player = new JsonObject();
+        player.putString("name", playerName);
+        JsonObject pos = new JsonObject();
+        pos.putNumber("x", position.getX());
+        pos.putNumber("y", position.getY());
+        player.putObject("position", pos);
+        return player;
     }
 }
