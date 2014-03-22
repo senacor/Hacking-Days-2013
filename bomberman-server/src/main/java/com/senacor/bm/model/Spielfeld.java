@@ -34,12 +34,22 @@ public class Spielfeld {
         return felder[x][y];
     }
 
-    public int getWidth() {
-        return width;
+    public Feldart getFeldArt(int x, int y) {
+        return Feldart.fromString(felder[x][y]);
+    }
+
+    public void makeFieldAccessibleForPlayerPlacement(int posX, int posY) {
+        if(getFeldArt(posX, posY).isPositionForPlayerPlacement()) {
+            setFeld(posX, posY, Feldart.LEER);
+        }
     }
 
     public int getHeight() {
         return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
     public JsonObject toJsonObject() {
