@@ -1,6 +1,5 @@
 package com.senacor.bm.server;
 
-import org.apache.commons.lang.StringUtils;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.Message;
 import org.vertx.java.platform.Verticle;
@@ -14,7 +13,8 @@ public class StateVerticle extends Verticle {
 	public class SetPlayerNameHandler implements Handler<Message<String>> {
 		@Override
 		public void handle(Message<String> message) {
-			if (StringUtils.isNotEmpty(message.body())) {
+		    final String body = message.body();
+		    if ((body != null) && (!"".equals(body))) {
 				playerName = message.body();
 			}
 			message.reply(playerName);

@@ -31,7 +31,7 @@ public class Server extends Verticle {
                 final ResultConcatenatingHandler concatenator = new ResultConcatenatingHandler() {
                     @Override
                     protected String concatenateResults() {
-                        return playerNameHandler.getResultMessage() + pointsHandler.getResultMessage();
+                        return playerNameHandler.getResultMessage() + ": " + pointsHandler.getResultMessage();
                     }
                 };
 
@@ -51,15 +51,6 @@ public class Server extends Verticle {
             public void handle(HttpServerRequest req) {
                 String file = req.path().equals("/") ? "index.html" : req.path();
                 req.response().sendFile(WEBROOT + file);
-            }
-        };
-    }
-
-    private Handler<HttpServerRequest> createNotFoundHandler() {
-        return new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest req) {
-                req.response().sendFile(WEBROOT + "404.html");
             }
         };
     }
@@ -86,12 +77,10 @@ public class Server extends Verticle {
         sockJSServer.bridge(sjsConfig, permitted, permitted);
         
         container.deployVerticle(StateVerticle.class.getCanonicalName(), new Handler<AsyncResult<String>>() {
-
             @Override
             public void handle(AsyncResult<String> event) {
                 logger.info("state verticle deployed: "  + event.succeeded());                
             }
-            
         });
 
         httpServer.listen(8080);

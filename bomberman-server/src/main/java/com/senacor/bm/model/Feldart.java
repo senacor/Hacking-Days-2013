@@ -5,10 +5,19 @@ package com.senacor.bm.model;
  */
 public enum Feldart {
 
-    LEER,
-    WAND,
-    STEIN,
-    PORTAL;
+    LEER (""),
+    WAND ("W"),
+    STEIN ("S"),
+    PORTAL ("P");
 
+    private String id;
 
+    Feldart(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return id;
+    }
 }
