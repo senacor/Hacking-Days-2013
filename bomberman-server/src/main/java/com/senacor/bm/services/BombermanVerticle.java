@@ -26,10 +26,12 @@ public class BombermanVerticle extends Verticle {
         platzierteBomben = new LinkedList<PlacedBomb>();
         platzierteItem = new LinkedList<PlacedItem>();
 
-        vertx.eventBus().registerHandler("ErmittleSpielfeld", new Handler<Message<JsonObject>>() {
+        vertx.eventBus().registerHandler("game.map.full", new Handler<Message<String>>() {
             @Override
-            public void handle(Message<JsonObject> message) {
+            public void handle(Message<String> message) {
+
                 message.reply(spielfeld.toJsonObject());
+//                vertx.eventBus().publish("game.map.full", spielfeld.toJsonObject());
             }
         });
 

@@ -16,6 +16,7 @@ package com.mycompany.myproject.test.integration.java;/*
  * @author <a href="http://tfox.org">Tim Fox</a>
  */
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
@@ -38,6 +39,7 @@ import static org.vertx.testtools.VertxAssert.*;
  */
 public class ModuleIntegrationTest extends TestVerticle {
 
+  @Ignore
   @Test
   public void testPing() {
     container.logger().info("in testPing()");
