@@ -30,12 +30,21 @@ public class Spieler {
         timeSliceFinishingMovement = 0;
     }
 
+
     public Position getPosition() {
         return position;
     }
 
     public void setPosition(Position position) {
         this.position = position;
+    }
+
+    public Position getTargetPosition() {
+        return targetPosition;
+    }
+
+    public void setTargetPosition(Position targetPosition) {
+        this.targetPosition = targetPosition;
     }
 
     public int getSiege() {

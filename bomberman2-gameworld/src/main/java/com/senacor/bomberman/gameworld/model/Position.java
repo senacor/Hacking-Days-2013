@@ -14,6 +14,23 @@ public class Position {
         this.y = y;
     }
 
+    public Position(Position pos) {
+        this.x = pos.x;
+        this.y = pos.y;
+    }
+
+    public void move(String direction) {
+        if(direction.equals("N")) {
+            y--;
+        } else if(direction.equals("S")) {
+            y++;
+        } else if(direction.equals("W")) {
+            x--;
+        } else if(direction.equals("E")) {
+            x++;
+        }
+    }
+
     public int getX() {
         return x;
     }

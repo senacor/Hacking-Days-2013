@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by jchrist on 22.03.14.
+ * 
  */
 public class GameWorldVerticle extends Verticle {
 
@@ -86,6 +86,14 @@ public class GameWorldVerticle extends Verticle {
                 //Zeitabschnitt aus und Prüfe
                 int currentTimeSlice=0;
 
+                try {
+                    if(message.body().getInteger("currentTimeSlice")!=null){
+                        currentTimeSlice = message.body().getInteger("currentTimeSlice");
+                    }
+                } catch(NullPointerException e){
+                    message.reply();
+                }
+
                 //Bewegungen abshließen
                 //für alle bewegenden Nutzer, die fällig sind:
                 for(Spieler player: spieler) {
@@ -96,10 +104,17 @@ public class GameWorldVerticle extends Verticle {
                 }
 
 
+                JsonArray playerMovements = message.body().getArray("PlayerMovements");
+
                 //für alle Bewegungsupdates
-                //finde SpielerNachNamen
-                String motion="N";
-                //bewegungSpieler(Spieler, motion);
+                for(Object playerMovement: playerMovements) {
+                    String playerName = ((JsonObject)playerMovement).getString("Player");
+                    String direction = ((JsonObject)playerMovement).getString("Direction");
+                    Spieler player = findPlayerByName(playerName);
+                    if(player != null) {
+                        bewegungSpieler(player, direction);
+                    }
+                }
 
                 //Bomben explodieren lassen
 
@@ -114,6 +129,15 @@ public class GameWorldVerticle extends Verticle {
 
             }
         });
+    }
+
+    private Spieler findPlayerByName(String playerName) {
+        for (Spieler player: spieler){
+            if(player.getPlayerName().equals(playerName)){
+                return player;
+            }
+        }
+        return null;
     }
 
     void clearGameData() {

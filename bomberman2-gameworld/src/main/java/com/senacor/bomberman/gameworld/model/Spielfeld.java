@@ -34,6 +34,10 @@ public class Spielfeld {
         return felder[x][y];
     }
 
+    public boolean isFieldAccessible(Position pos){
+        return getFeldArt(pos.getX(), pos.getY()).isAccessible();
+    }
+
     public Feldart getFeldArt(int x, int y) {
         return Feldart.fromString(felder[x][y]);
     }
