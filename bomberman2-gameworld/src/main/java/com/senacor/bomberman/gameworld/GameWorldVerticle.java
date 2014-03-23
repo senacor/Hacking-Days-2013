@@ -87,17 +87,19 @@ public class GameWorldVerticle extends Verticle {
                 int currentTimeSlice=0;
 
                 //Bewegungen abshließen
-
-                //für alle Bewegungsupdates
-                BewegungSpieler();
-
                 //für alle bewegenden Nutzer, die fällig sind:
                 for(Spieler player: spieler) {
-                   if(player.isMoving()) {
-                       pruefePositionswechselNutzer(player, currentTimeSlice);
-                       pruefeBewegungNutzerAbgeschlossen(player, currentTimeSlice);
-                   }
+                    if(player.isMoving()) {
+                        pruefePositionswechselNutzer(player, currentTimeSlice);
+                        pruefeBewegungNutzerAbgeschlossen(player, currentTimeSlice);
+                    }
                 }
+
+
+                //für alle Bewegungsupdates
+                //finde SpielerNachNamen
+                String motion="N";
+                //bewegungSpieler(Spieler, motion);
 
                 //Bomben explodieren lassen
 
@@ -172,16 +174,30 @@ public class GameWorldVerticle extends Verticle {
         return result;
     }
 
-    public void BewegungSpieler() {
+    public void bewegungSpieler(Spieler player, String direction) {
         // Stelle sicher, dass sich der Spieler nicht bewegt
-        // Prüfe ob, Zielposition frei ist (keine Wand und Bombe)
+        if(!player.isMoving()) {
 
-        // Broadcast „Spielerbewegung“ für Animation
+            Position newPosition = new Position(player.getPosition());
+            newPosition.move(direction);
 
-        // Timer  einstellen (halbe Bewegungszeit): Positionswechsel
-        // Event Positionswechsel
-        // Timer einstellen (volle Bewegungszeit): Bewegung abgeschlossen
+            if ((newPosition.getX() < 0) || newPosition.getX() >= spielfeld.getWidth() ||
+                    (newPosition.getY() < 0) || newPosition.getY() >= spielfeld.getHeight()) {
+                return;
+            }
 
+            // Prüfe ob, Zielposition frei ist (keine Wand und Bombe)
+            if (!spielfeld.isFieldAccessible(newPosition)) {
+                return;
+            }
+
+            // Timer  einstellen (halbe Bewegungszeit): Positionswechsel
+            player.setTimeSliceReachingNextField(1);
+            // Timer einstellen (volle Bewegungszeit): Bewegung abgeschlossen
+            player.setTimeSliceFinishingMovement(1);
+            // Event Positionswechsel
+            player.setTargetPosition(newPosition);
+        }
     }
 
     public void pruefePositionswechselNutzer(Spieler player, int currentTimeSlice) {
