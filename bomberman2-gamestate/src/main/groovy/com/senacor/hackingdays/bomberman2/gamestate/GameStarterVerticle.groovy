@@ -17,7 +17,7 @@ class GameStarterVerticle extends Verticle{
             gameIdCounter++
             //println(LockStepVerticle.class.getCanonicalName())
             println message.body
-            Verticle deployable = container.deployVerticle("groovy:LockStepVerticle",
+            Verticle deployable = container.deployVerticle("groovy:" + LockStepVerticle.class.getCanonicalName(),
                     ["participants" : message.body["participants"], "gameId" : gameIdCounter], {doneHandler ->
                             message.body["participants"].each {vertx.eventBus.send(it.get("name")+".start", gameIdCounter)}
                         })
@@ -25,6 +25,7 @@ class GameStarterVerticle extends Verticle{
         });
 
         vertx.eventBus.registerHandler("game.stop", { message ->
+            println "undeploying";
             container.undeployVerticle(gameIdToVerticleMap[message.body])
         });
     }
