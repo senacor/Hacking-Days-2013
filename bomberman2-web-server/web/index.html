@@ -48,6 +48,8 @@
             bus.registerHandler(playerName + ".nextround", function(message){
                 console.log("next round");
                 drawsSinceLastUpdate = 0;
+                lastKey = "";
+                bombSet = false;
             });
 
             bus.registerHandler("chatmessage.toclient", function(message) {
