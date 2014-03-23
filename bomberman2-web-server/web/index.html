@@ -25,7 +25,7 @@
 
            var messages = [];
 
-           var bus = new vertx.EventBus(getServer()+"eventbus");
+           var bus = new vertx.EventBus(getServer()+"/eventbus");
            var playerName = Math.floor((Math.random()*100000)+1) + "";
            var initInfo = new InitInfo([playerName], 11, 11);
            var joinInfo = new JoinInfo(playerName, 1);
