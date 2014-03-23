@@ -107,8 +107,8 @@
             <li id="entry4"></li>
             <li id="entry5"></li>
         </ul>
-        <input type="button" accesskey="S" onclick="bus.send('game.initialize', initInfo , function(reply) {init(reply);})" value="Start Game" />
-        <input type="button" accesskey="J" onclick="bus.send('game.join', joinInfo , function(reply) {init(reply);})" value="Join Game" />
+        <input style="position:absolute;top:5px;left:5px" type="button" accesskey="S" onclick="bus.send('game.initialize', initInfo , function(reply) {init(reply);})" value="Start Game" />
+        <input style="position:absolute;top:5px;left:100px" type="button" accesskey="J" onclick="bus.send('game.join', joinInfo , function(reply) {init(reply);})" value="Join Game" />
         <input type="button" accesskey="U" onclick="bus.send('state.update', 'u')" value="up" />
         <input type="button" accesskey="D" onclick="bus.send('state.update', 'd')" value="down" />
         <input type="button" accesskey="L" onclick="bus.send('state.update', 'l')" value="left" />
