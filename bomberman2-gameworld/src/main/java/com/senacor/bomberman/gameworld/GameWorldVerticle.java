@@ -75,6 +75,9 @@ public class GameWorldVerticle extends Verticle {
                 participants.putArray("participants", getPlayer());
 
                 vertx.eventBus().send("game.start", participants);
+                vertx.eventBus().send("dashboard.start", "gameId");
+                System.out.println("dslkfjlskdfjl" + getGameWorldJsonObject());
+                vertx.eventBus().send("dashboard.init.reply", getGameWorldJsonObject());
 
                 container.logger().info("game initialized");
             }
