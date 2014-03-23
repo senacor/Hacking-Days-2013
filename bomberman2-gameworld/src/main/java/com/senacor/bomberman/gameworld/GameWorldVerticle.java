@@ -92,8 +92,9 @@ public class GameWorldVerticle extends Verticle {
                 String name = message.body().getString("Name");
                 int gameId = message.body().getInteger("GameId");
 
-                Spieler player = new Spieler(name.toString());
-                spieler.add(0, player);
+                String uniqueName = findUniqueName(name.toString());
+                Spieler player = new Spieler(uniqueName);
+                addPlayer(player);
                 placePlayerOnTheMap(player);
 
                 // reply initial map
@@ -158,6 +159,25 @@ public class GameWorldVerticle extends Verticle {
 
             }
         });
+    }
+
+    private void addPlayer(Spieler player) {
+        spieler.add(0, player);
+    }
+
+    private String findUniqueName(String name) {
+        boolean nameIsUnique = false;
+        while(!nameIsUnique) {
+            nameIsUnique = true;
+            for(Spieler s : spieler) {
+                if(s.getPlayerName().equals(name)){
+                    name = name + ((Double)(Math.random()*10)).intValue();
+                    nameIsUnique = false;
+                    break;
+                }
+            }
+        }
+        return name;
     }
 
     private Spieler findPlayerByName(String playerName) {
