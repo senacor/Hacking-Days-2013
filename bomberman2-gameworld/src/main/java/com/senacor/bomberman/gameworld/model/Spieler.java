@@ -15,6 +15,7 @@ public class Spieler {
     private int timeSliceFinishingMovement;
     private int timeSliceReachingNextField;
     private boolean istImSpiel;
+    private String direction;
 
     private int siege;
     private int niederlagen;
@@ -106,4 +107,17 @@ public class Spieler {
         targetPosition = null;
         this.setTimeSliceFinishingMovement(0);
     };
+
+    public JsonObject getUpdateJsonObject(){
+        JsonObject result = new JsonObject();
+        result.putString("playername", playerName);
+        result.putObject("position", position.toJsonObject());
+        result.putString("direction", direction);
+        return result;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
 }
