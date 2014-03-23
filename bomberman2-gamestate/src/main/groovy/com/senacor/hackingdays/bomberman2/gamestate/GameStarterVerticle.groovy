@@ -13,6 +13,8 @@ class GameStarterVerticle extends Verticle{
 
     @Override
     Object start() {
+        container.logger.info("started GameStarterVerticle");
+
         vertx.eventBus.registerHandler("game.start", { message ->
             gameIdCounter++
             //println(LockStepVerticle.class.getCanonicalName())

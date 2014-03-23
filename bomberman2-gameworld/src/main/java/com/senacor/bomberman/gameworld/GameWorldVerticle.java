@@ -18,6 +18,7 @@ import java.util.Set;
 public class GameWorldVerticle extends Verticle {
 
     public static final String GAME_INIT = "game.initialize";
+    public static final String GAME_JOIN = "game.join";
     public static final String GAME_UPDATE = "game.update";
 
     public static final int DEFAULT_MAP_WIDTH = 11;
@@ -76,6 +77,34 @@ public class GameWorldVerticle extends Verticle {
                 vertx.eventBus().send("game.start", participants);
 
                 container.logger().info("game initialized");
+            }
+        });
+
+        vertx.eventBus().registerHandler(GAME_JOIN, new Handler<Message<JsonObject>>() {
+            @Override
+            public void handle(Message<JsonObject> message) {
+                container.logger().info("join game");
+
+                if(spielfeld == null){
+                    throw new RuntimeException("Es gibt noch kein Spiel!");
+                }
+
+                String name = message.body().getString("Name");
+                int gameId = message.body().getInteger("GameId");
+
+                Spieler player = new Spieler(name.toString());
+                spieler.add(0, player);
+                placePlayerOnTheMap(player);
+
+                // reply initial map
+                message.reply(getGameWorldJsonObject());
+
+                // update game state.
+                JsonObject joinMsg = new JsonObject();
+                joinMsg.putObject("player", player.toJsonObject());
+                vertx.eventBus().send("game."+gameId+".join", joinMsg);
+
+                container.logger().info("game joined");
             }
         });
 
@@ -159,13 +188,11 @@ public class GameWorldVerticle extends Verticle {
                 spieler.add(new Spieler(playername.toString()));
             }
         } else {
-            Spieler player = new Spieler("Bomberman");
-            spieler.add(player);
+            spieler.add(new Spieler("Bomberman"));
         }
     }
 
-
-        private JsonObject getGameWorldJsonObject() {
+    private JsonObject getGameWorldJsonObject() {
         JsonObject fullGameWorld = new JsonObject();
         fullGameWorld.putArray("player", getPlayer());
         fullGameWorld.putArray("bombs", getBombs());
@@ -299,30 +326,30 @@ public class GameWorldVerticle extends Verticle {
 
     }
 
-
     public void placePlayersOnTheMap() {
-
         //Platziere Spieler
         for(Spieler playerToBePlaced: spieler) {
-            boolean playerPositionFound = false;
-            int counter = 0;
-            while (!playerPositionFound ) {
-                int posX = (int) Math.round(Math.random() * (spielfeld.getWidth()-2));
-                int posY = (int) Math.round(Math.random() * (spielfeld.getHeight()-2));
-                if(!existPlayerOnStartupPosition(posX, posY) && isFieldAccessable(posX, posY) && isPlayerPlacementPossible(posX, posY)) {
-                    makePlayerLocationWalkable(posX, posY);
-                    playerToBePlaced.setPosition(new Position(posX, posY));
-                    playerPositionFound = true;
-                    counter = 0;
-                }
-                counter ++;
-                if(counter > 30){
-                    throw new RuntimeException("Spieler konnten nicht positioniert werden");
-                }
-            }
-
+            placePlayerOnTheMap(playerToBePlaced);
         }
+    }
 
+    private void placePlayerOnTheMap(Spieler playerToBePlaced) {
+        boolean playerPositionFound = false;
+        int counter = 0;
+        while (!playerPositionFound ) {
+            int posX = (int) Math.round(Math.random() * (spielfeld.getWidth()-2));
+            int posY = (int) Math.round(Math.random() * (spielfeld.getHeight()-2));
+            if(!existPlayerOnStartupPosition(posX, posY) && isFieldAccessable(posX, posY) && isPlayerPlacementPossible(posX, posY)) {
+                makePlayerLocationWalkable(posX, posY);
+                playerToBePlaced.setPosition(new Position(posX, posY));
+                playerPositionFound = true;
+                counter = 0;
+            }
+            counter ++;
+            if(counter > 30){
+                throw new RuntimeException("Spieler konnten nicht positioniert werden");
+            }
+        }
     }
 
     public boolean existPlayerOnStartupPosition(int posX, int posY){
