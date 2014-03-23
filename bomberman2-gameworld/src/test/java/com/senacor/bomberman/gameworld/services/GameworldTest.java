@@ -2,6 +2,7 @@ package com.senacor.bomberman.gameworld.services;
 
 import com.senacor.bomberman.gameworld.GameWorldVerticle;
 import com.senacor.bomberman.gameworld.model.Feldart;
+import com.senacor.bomberman.gameworld.model.Gameworld;
 import com.senacor.bomberman.gameworld.model.Spielfeld;
 import org.junit.Test;
 
@@ -12,13 +13,12 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by abremm on 21.03.14.
  */
-public class GameWorldVerticleTest {
+public class GameworldTest {
 
     @Test
     public void createSmalSpielfeld() {
 
-        GameWorldVerticle csv = new GameWorldVerticle();
-        csv.erzeugeSpielfeld();
+        Gameworld csv = new Gameworld();
         Spielfeld spielfeld = csv.getSpielfeld();
 
         for(int i=0; i<spielfeld.getHeight(); i++){
@@ -34,8 +34,8 @@ public class GameWorldVerticleTest {
 
     @Test
     public void spielfeldIstVollstaendig() {
-        GameWorldVerticle csv = new GameWorldVerticle();
-        csv.erzeugeSpielfeld();
+
+        Gameworld csv = new Gameworld();
         Spielfeld spielfeld = csv.getSpielfeld();
 
         for(int i=0; i<spielfeld.getHeight(); i++){
