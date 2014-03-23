@@ -30,10 +30,6 @@ class BrowserCommunicationVerticle extends Verticle{
                 message.reply(message2.body)
             })
         };
-
-        vertx.setPeriodic(300) {
-            vertx.eventBus.publish("ping","ping")
-        }
     }
 
 
