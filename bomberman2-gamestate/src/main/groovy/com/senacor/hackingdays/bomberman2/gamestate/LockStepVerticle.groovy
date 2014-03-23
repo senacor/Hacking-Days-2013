@@ -34,10 +34,10 @@ class LockStepVerticle extends Verticle{
             if(playNameToCommand.size()==participants.size()){
                 vertx.eventBus.send("game.capture.state", captureState)
                 roundCounter++
-                playNameToCommand.clear()
                 JsonObject nextroundMessage = new JsonObject()
                 nextroundMessage.putArray("commands", new JsonArray(playNameToCommand))
                 nextroundMessage.putNumber("roundid", roundCounter)
+                vertx.eventBus.send("game.update", nextroundMessage);
                 participants.each {vertx.eventBus.send(it.get("name")+".nextround", roundCounter)}
                 playNameToCommand.clear()
             }
