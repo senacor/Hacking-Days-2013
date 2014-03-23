@@ -50,11 +50,12 @@ class LockStepVerticle extends Verticle{
                 }
                 nextroundMessage.putArray("commands", updates)
                 nextroundMessage.putNumber("roundid", roundCounter)
-                participants.each {
-                    vertx.eventBus.send(it.get("name")+".nextround", roundCounter)
-                }
-                vertx.eventBus.send("dashboard.nextround", message.body["command"])
-                playNameToCommand.clear()
+                vertx.eventBus.send("game.update", nextroundMessage);
+//                participants.each {
+//                    vertx.eventBus.send(it.get("name")+".nextround", roundCounter)
+//                }
+//                vertx.eventBus.send("dashboard.nextround", message.body["command"])
+//                playNameToCommand.clear()
             }
         })
 
@@ -63,10 +64,11 @@ class LockStepVerticle extends Verticle{
 
         vertx.eventBus.registerHandler("game.update.reply", { message ->
             container.logger.info("handle game.update.reply");
-            container.logger.info(message.body)
             JsonObject update = new JsonObject();
             update.putNumber("roundcounter", roundCounter);
             update.putArray("update", new JsonArray(message.body["update"]));
+            container.logger.info("send update to client");
+            container.logger.info(update);
             participants.each {vertx.eventBus.send(it.get("name")+".nextround", update)}
             playNameToCommand.clear()
         })
