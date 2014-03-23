@@ -23,9 +23,12 @@ import org.vertx.groovy.platform.Verticle
 class AggregatorVerticle extends Verticle {
 
     @Override
-    Object start() {
+    def start() {
         container.deployModule("com.senacor.hackingdays~bomberman2-web-server-module~1.0.0-final", container.config)
-        container.deployModule("com.senacor.hackingdays~bomberman2-mustache-renderer-module~1.0.0-final")
+        container.deployModule("com.senacor.hackingdays~bomberman2-chatserver~1.0.1-final");
+        container.deployModule("com.senacor.hackingdays~bomberman2-gamestate-module~1.0.0-final");
+        container.deployModule("com.senacor.hackingdays~bomberman2-gameworld~1.0.0-final");
+        container.deployModule("com.senacor.hackingdays~bomberman2-matchmaker~1.0.1-final");
     }
 
 }
