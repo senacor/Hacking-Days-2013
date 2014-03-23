@@ -2,7 +2,7 @@ var canvas;
 var ctx;
 
 var drawIntervalInMs = 20;
-var turnLengthInMs = 40;
+var turnLengthInMs = 500;
 
 var drawsSinceLastUpdate = 0;
 var drawsRequiredForUpdate = turnLengthInMs/drawIntervalInMs;
@@ -83,7 +83,7 @@ function draw(){
     drawsSinceLastUpdate += 1;
 
     if(gameStarted && (drawsSinceLastUpdate === drawsRequiredForUpdate + 1)){
-        bus.send("game." + playerName + ".move", new PlayerState(lastKey, bombSet));
+        bus.send("game." + gameId, new PlayerState(playerName, lastKey, bombSet));
     }
 }
 
@@ -110,7 +110,7 @@ function handlePressedKey(event) {
   //if (stepIsPossible) {
     if (event.keyCode == 37 && x > 10 && stepIsPossible(-1, 0)) {
       x -= step;
-      lastKey = "W";
+      lastKey = "L";
       img.sprite = createSprite(0, [10, 11, 9], true)
     }
     //up arrow
@@ -123,7 +123,7 @@ function handlePressedKey(event) {
     //right_arrow
     else if (event.keyCode == 39 && x < 640 && stepIsPossible(1, 0)) {
       x += step;
-      lastKey = "E";
+      lastKey = "R";
       img.sprite = createSprite(0, [4, 5, 3], true)
 
     }
