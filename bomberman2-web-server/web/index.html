@@ -66,7 +66,7 @@
 	        	var input = $("#chatinput");
 	            var message = input.val();
 	            input.val("");
-	            bus.send("chatmessage.toserver", message);
+	            bus.send("chatmessage.toserver", playerName + ": " + message);
 	        }
         </script>
     </head>
