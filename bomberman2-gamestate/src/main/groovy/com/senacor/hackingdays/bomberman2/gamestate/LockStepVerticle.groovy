@@ -1,6 +1,7 @@
 package com.senacor.hackingdays.bomberman2.gamestate
 
 import org.vertx.groovy.platform.Verticle
+import org.vertx.java.core.Handler
 import org.vertx.java.core.json.JsonArray
 import org.vertx.java.core.json.JsonObject
 
@@ -31,6 +32,9 @@ class LockStepVerticle extends Verticle{
             println ("player:" + message.body["player"])
             println ("command:" + message.body["command"])
 
+            println ("players:" +participants.size())
+            println ("recived:" + playNameToCommand.size())
+
             if(playNameToCommand.size()==participants.size()){
                 vertx.eventBus.send("game.capture.state", captureState)
                 roundCounter++
@@ -38,10 +42,20 @@ class LockStepVerticle extends Verticle{
                 nextroundMessage.putArray("commands", new JsonArray(playNameToCommand))
                 nextroundMessage.putNumber("roundid", roundCounter)
                 vertx.eventBus.send("game.update", nextroundMessage);
-                participants.each {vertx.eventBus.send(it.get("name")+".nextround", roundCounter)}
-                playNameToCommand.clear()
             }
         })
+
+
+
+
+        vertx.eventBus.registerHandler("game.update.reply", { message ->
+            JsonObject update = new JsonObject();
+            update.putNumber("roundcounter", roundCounter);
+            //update.putArray("update", message.body["update"]);
+            participants.each {vertx.eventBus.send(it.get("name")+".nextround", update)}
+            playNameToCommand.clear()
+        })
+
 
         vertx.eventBus.registerHandler("game."+gameId+".join", { message ->
              def player =  message.body["player"];
@@ -50,6 +64,8 @@ class LockStepVerticle extends Verticle{
             vertx.eventBus.send(player.get("name")+".start", gameId)
 
             container.logger.info(player.get("name")+" joined game "+gameId);
+            println ("players:" +participants.size())
+            println ("recived:" + playNameToCommand.size())
         })
     }
 }
