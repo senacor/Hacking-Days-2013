@@ -39,7 +39,16 @@ class LockStepVerticle extends Verticle{
                 roundCounter++
                 playNameToCommand.clear()
                 JsonObject nextroundMessage = new JsonObject()
-                nextroundMessage.putArray("commands", new JsonArray(playNameToCommand))
+
+                JsonArray updates = new JsonArray();
+                for(String playerName : playNameToCommand.keySet()){
+                    String direction = playNameToCommand.get(playerName);
+                    JsonObject update = new JsonObject();
+                    update.putString("player",playerName);
+                    update.putString("direction",direction);
+                    updates.add(update);
+                }
+                nextroundMessage.putArray("commands", updates)
                 nextroundMessage.putNumber("roundid", roundCounter)
                 participants.each {
                     vertx.eventBus.send(it.get("name")+".nextround", roundCounter)
