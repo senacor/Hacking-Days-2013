@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 
+ *
  */
 public class GameWorldVerticle extends Verticle {
 
@@ -132,6 +132,7 @@ public class GameWorldVerticle extends Verticle {
                 //Bewegungen abshließen
                 //für alle bewegenden Nutzer, die fällig sind:
                 for(Spieler player: spieler) {
+                    player.setDirection("");
                     if(player.isMoving()) {
                         pruefePositionswechselNutzer(player, currentTimeSlice);
                         pruefeBewegungNutzerAbgeschlossen(player, currentTimeSlice);
@@ -255,7 +256,7 @@ public class GameWorldVerticle extends Verticle {
     }
 
     public void bewegungSpieler(Spieler player, String direction) {
-        player.setDirection(direction);
+
         // Stelle sicher, dass sich der Spieler nicht bewegt
         if(!player.isMoving()) {
 
@@ -278,6 +279,7 @@ public class GameWorldVerticle extends Verticle {
             player.setTimeSliceFinishingMovement(1);
             // Event Positionswechsel
             player.setTargetPosition(newPosition);
+            player.setDirection(direction);
         }
     }
 
