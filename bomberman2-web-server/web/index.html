@@ -16,9 +16,9 @@
         <script>
            var bus = new vertx.EventBus("http://localhost:8080/eventbus");
            var messages = [];
-           var initInfo = new InitInfo(["Player11"], 11, 11);
-           var joinInfo = new JoinInfo("Player22", 1);
-           var playerName = "Player11";
+           var playerName = Math.floor((Math.random()*100000)+1) + "";
+           var initInfo = new InitInfo([playerName], 11, 11);
+           var joinInfo = new JoinInfo(playerName, 1);
 
             bus.onopen = function() {
                 console.log("bus connection is now open - registering handler for test.address ...");
