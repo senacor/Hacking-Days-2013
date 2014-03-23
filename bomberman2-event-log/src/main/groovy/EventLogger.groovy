@@ -8,7 +8,7 @@ import org.vertx.groovy.platform.Verticle;
 class EventLogger extends Verticle {
 
   def start() {
-      println("Starting Groovy-based EventLogger ...");
+      println("Starting Groovy-based EventLogger ... "+Verticle.class.getCanonicalName());
 
       def host = container.env["OPENSHIFT_MONGODB_DB_HOST"];
       def port = container.env["OPENSHIFT_MONGODB_DB_PORT"];
@@ -33,18 +33,19 @@ class EventLogger extends Verticle {
       def myHandler = { message -> 
           println("I received a message " + message.body);
           def event = message.body()
-          event.put("timestamp", new Date())
+          event.put("timestamp", new Date().toString())
           def saveMessage = [action: "save", collection: "access", document: event];
 
           eb.send("vertx.mongopersistor", saveMessage);
           eb.publish("event.dashboard", event);
       }
 
-      def captureReplayHandler = { message ->
+      def captureHandler = { message ->
           println("Received game state infomration: " + message.body)
           def saveMessage = [action: "save", collection: "capture", document: message.body]
 
-          eb.send("vertx.mongopersistor", saveMessage)
+          eb.send("vertx.mongopersistor", saveMessage);
+          eb.publish("event.dashboard", saveMessage);
       }
 
       def findHandler = { message ->
@@ -63,9 +64,10 @@ class EventLogger extends Verticle {
       }
 
       eb.registerHandler("hd13.eventlogger", myHandler);
-
-      eb.registerHandler("game.capture.state", captureReplayHandler)
+      eb.registerHandler("game.capture.state", captureHandler)
       eb.registerHandler("game.replay.state", replayHandler);
+
+      println("after register");
   }
 
 }
