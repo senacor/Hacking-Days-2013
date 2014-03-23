@@ -170,7 +170,9 @@ public class GameWorldVerticle extends Verticle {
     private boolean isNameUnique(String name) {
         boolean nameIsUnique = false;
         for(Spieler s : spieler) {
-            return false;
+            if(s.equals(name)){
+                return false;
+            }
         }
         return true;
     }
