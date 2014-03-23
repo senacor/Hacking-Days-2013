@@ -20,6 +20,10 @@ public class Position {
     }
 
     public void move(String direction) {
+        if(direction == null) {
+            return;
+        }
+
         if(direction.equals("U")) {
             y--;
         } else if(direction.equals("D")) {
