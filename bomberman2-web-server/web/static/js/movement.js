@@ -122,39 +122,49 @@ function handlePressedKey(event) {
         return false;
 
   //left arrow
-  //var movePossible = stepIsPossible();
-  //if (stepIsPossible) {
-    if (event.keyCode == 37 && x > 10 && stepIsPossible(-1, 0)) {
-      x -= step;
+    if (event.keyCode == 37 && x > 10 ) {
       lastKey = "L";
-      img.sprite = createSprite(0, [10, 11, 9], true)
     }
     //up arrow
-    else if (event.keyCode == 38 && y > 10 && stepIsPossible(0, -1)) {
-      y -= step;
+    else if (event.keyCode == 38 && y > 10 ) {
       lastKey = "U";
-      img.sprite = createSprite(0, [1, 2, 0], true)
-
     }
     //right_arrow
-    else if (event.keyCode == 39 && x < 640 && stepIsPossible(1, 0)) {
-      x += step;
+    else if (event.keyCode == 39 && x < 640) {
       lastKey = "R";
-      img.sprite = createSprite(0, [4, 5, 3], true)
-
     }
     //down_arrow
-    else if (event.keyCode == 40 && y < 640 && stepIsPossible(0, 1)) {
-      y += step;
+    else if (event.keyCode == 40 && y < 640) {
       lastKey = "D";
-      img.sprite = createSprite(0, [7, 8, 6], true)
     }
   //enter
     else if (event.keyCode == 13) {
     bombSet = true;
-    img.sprite = createSprite(5, [12, 13, 14], true)
   }
+
   return false;
+}
+
+function move(direction){
+    if(direction === "L"){
+        x -= step;
+        img.sprite = createSprite(0, [10, 11, 9], true)
+    }
+
+    if(direction === "U"){
+        y -= step;
+        img.sprite = createSprite(0, [1, 2, 0], true)
+    }
+
+    if(direction === "R"){
+        x += step;
+        img.sprite = createSprite(0, [4, 5, 3], true)
+    }
+
+    if(direction === "D"){
+        y += step;
+        img.sprite = createSprite(0, [7, 8, 6], true)
+    }
 }
 
 function focusCanvas() {

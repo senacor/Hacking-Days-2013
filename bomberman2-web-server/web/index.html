@@ -40,13 +40,23 @@
                     drawsSinceLastUpdate = 0;
                 });
 
-                bus.registerHandler(playerName + ".nextround", function(message) {
-                    console.log("next round");
-                    drawsSinceLastUpdate = 0;
-                    lastKey = "";
-                    bombSet = false;
-                });
+            bus.registerHandler(playerName + ".nextround", function(message){
+                console.log("next round");
+                drawsSinceLastUpdate = 0;
+                lastKey = "";
+                bombSet = false;
 
+                if( typeof message.update == 'undefined' ){
+                    console.log("next round contains no update!");
+                    return;
+                }
+
+                for(var player in message.update.player){
+                    if(player.playerName === playerName){
+                        move(player.direction);
+                    }
+                }
+            });
                 bus.registerHandler("chatmessage.toclient", function(message) {
                     var box = $("#chatlog");
                     box.val(box.val() + message + "\n");
