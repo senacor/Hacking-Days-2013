@@ -15,6 +15,7 @@ var width=50;
 var height=50;
 
 var img = new Image();
+var imgP2 = new Image();
 var wall = new Image();
 var wood = new Image();
 
@@ -29,6 +30,7 @@ var step = 65;
 
 //set an image url
 img.src = "static/img/bomberman_2.gif";
+imgP2.src = "static/img/bomberman_2.gif";
 wall.src = "static/img/wall.png";
 wood.src = "static/img/wood.png";
 
@@ -86,8 +88,7 @@ function draw(){
 
     // draw a second player
     if(players.length > 1){
-        var imgP2 = new Image();
-        imgP2.src = "static/img/bomberman_2.gif";
+
         imgP2.sprite = createSprite(1, [0], true);
         var p2_x = 64 * players[1].position.x;
         var p2_y = 64 * players[1].position.y;
