@@ -1,5 +1,7 @@
 import org.vertx.java.platform.impl.cli.Starter
 
+import java.util.regex.Pattern
+
 /*
  * Copyright 2012 the original author or authors.
  *
@@ -20,6 +22,33 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
+
+
+apply plugin: GreetingPlugin
+
+class GreetingPlugin implements Plugin<Project> {
+    void apply(Project project) {
+        def jh = System.properties.find { it.key == "VERTX_HOME" };
+        if (jh == null) {
+            println ("so what ... ")
+            if (hasProperty('VERTX_HOME') )  {
+                jh = $VERTX_HOME;
+            } else {
+                def path = System.getenv("PATH");
+                println("path: "+path);
+                String[] paths = path.split(Pattern.quote(":"));
+                jh = paths.find {it.contains("vert.x")}
+                // paths.each {println ("part: "+it)}
+            }
+
+        }
+
+        println("jh: "+jh)
+        project.task('hello') << {
+            println "Hello from the GreetingPlugin"
+        }
+    }
+}
 
 def cpSeparator = System.getProperty("path.separator")
 
@@ -221,3 +250,4 @@ plugins.withType(IdeaPlugin) {
     }
   }
 }
+
