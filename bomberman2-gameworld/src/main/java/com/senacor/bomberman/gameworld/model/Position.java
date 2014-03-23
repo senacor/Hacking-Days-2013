@@ -20,13 +20,13 @@ public class Position {
     }
 
     public void move(String direction) {
-        if(direction.equals("N")) {
+        if(direction.equals("U")) {
             y--;
-        } else if(direction.equals("S")) {
+        } else if(direction.equals("D")) {
             y++;
-        } else if(direction.equals("W")) {
+        } else if(direction.equals("L")) {
             x--;
-        } else if(direction.equals("E")) {
+        } else if(direction.equals("R")) {
             x++;
         }
     }

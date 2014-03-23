@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 
+ *
  */
 public class GameWorldVerticle extends Verticle {
 
@@ -33,6 +33,7 @@ public class GameWorldVerticle extends Verticle {
     private List<Spieler> spieler = new LinkedList<Spieler>();
     private List<PlacedBomb> platzierteBomben = new LinkedList<PlacedBomb>();
     private List<PlacedItem> platzierteItem = new LinkedList<PlacedItem>();
+    private int currentTimeSlice=0;
 
     public void start() {
         container.logger().info("started GameWorldVerticle");
@@ -117,14 +118,16 @@ public class GameWorldVerticle extends Verticle {
         vertx.eventBus().registerHandler(GAME_UPDATE, new Handler<Message<JsonObject>>() {
             @Override
             public void handle(Message<JsonObject> message) {
+                container.logger().info(">>> game update");
 
+                 currentTimeSlice++;
                 //Zeitabschnitt aus und Prüfe
-                int currentTimeSlice=0;
+//                int currentTimeSlice=0;
 
                 try {
-                    if(message.body().getInteger("currentTimeSlice")!=null){
-                        currentTimeSlice = message.body().getInteger("currentTimeSlice");
-                    }
+//                    if(message.body().getInteger("currentTimeSlice")!=null){
+//                        currentTimeSlice = message.body().getInteger("currentTimeSlice");
+//                    }
                 } catch(NullPointerException e){
                     message.reply();
                 }
@@ -132,6 +135,7 @@ public class GameWorldVerticle extends Verticle {
                 //Bewegungen abshließen
                 //für alle bewegenden Nutzer, die fällig sind:
                 for(Spieler player: spieler) {
+                    player.setDirection("");
                     if(player.isMoving()) {
                         pruefePositionswechselNutzer(player, currentTimeSlice);
                         pruefeBewegungNutzerAbgeschlossen(player, currentTimeSlice);
@@ -139,12 +143,12 @@ public class GameWorldVerticle extends Verticle {
                 }
 
 
-                JsonArray playerMovements = message.body().getArray("PlayerMovements");
+                JsonArray playerMovements = message.body().getArray("commands");
 
                 //für alle Bewegungsupdates
                 for(Object playerMovement: playerMovements) {
-                    String playerName = ((JsonObject)playerMovement).getString("Player");
-                    String direction = ((JsonObject)playerMovement).getString("Direction");
+                    String playerName = ((JsonObject)playerMovement).getString("player");
+                    String direction = ((JsonObject)playerMovement).getString("command");
                     Spieler player = findPlayerByName(playerName);
                     if(player != null) {
                         bewegungSpieler(player, direction);
@@ -161,7 +165,16 @@ public class GameWorldVerticle extends Verticle {
                 //setze neuen Zeitabschnitt
 
                 //sendeWorldupdate
+                JsonObject update = new JsonObject();
+                JsonArray playerUpdates = new JsonArray();
+                for(Spieler s : spieler){
+                    playerUpdates.add(s.getUpdateJsonObject());
+                }
+                update.putArray("update", playerUpdates);
+                container.logger().info(update.toString());
+                message.reply(update);
 
+                vertx.eventBus().send("game.update.reply", update);
             }
         });
     }
@@ -173,7 +186,9 @@ public class GameWorldVerticle extends Verticle {
     private boolean isNameUnique(String name) {
         boolean nameIsUnique = false;
         for(Spieler s : spieler) {
-            return false;
+            if(s.equals(name)){
+                return false;
+            }
         }
         return true;
     }
@@ -244,6 +259,7 @@ public class GameWorldVerticle extends Verticle {
     }
 
     public void bewegungSpieler(Spieler player, String direction) {
+
         // Stelle sicher, dass sich der Spieler nicht bewegt
         if(!player.isMoving()) {
 
@@ -266,6 +282,7 @@ public class GameWorldVerticle extends Verticle {
             player.setTimeSliceFinishingMovement(1);
             // Event Positionswechsel
             player.setTargetPosition(newPosition);
+            player.setDirection(direction);
         }
     }
 
