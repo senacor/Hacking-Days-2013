@@ -19,7 +19,7 @@
                 if (location.protocol === "file:") {
                     return "http://localhost:8080";
                 } else {
-                    return location.protocol + "//" + location.host + (location.port ? ":" + location.port : "");
+                    return "";
                 }
             }
 
