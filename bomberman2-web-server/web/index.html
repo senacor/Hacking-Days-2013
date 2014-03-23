@@ -41,7 +41,7 @@
                 });
 
             bus.registerHandler(playerName + ".nextround", function(message){
-                console.log("next round");
+                console.log("next round: " + message);
                 drawsSinceLastUpdate = 0;
                 lastKey = "";
                 bombSet = false;
@@ -51,8 +51,13 @@
                     return;
                 }
 
-                for(var player in message.update.player){
-                    if(player.playerName === playerName){
+                msg = JSON.stringify(message);
+                console.log(msg);
+
+                for(var index in message.update){
+                    var player = message.update[index];
+                    console.log(player.playername);
+                    if(player.playername === playerName){
                         move(player.direction);
                     }
                 }
