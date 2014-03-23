@@ -49,9 +49,11 @@ class LockStepVerticle extends Verticle{
 
 
         vertx.eventBus.registerHandler("game.update.reply", { message ->
+            container.logger.info("handle game.update.reply");
+            container.logger.info(message.body)
             JsonObject update = new JsonObject();
             update.putNumber("roundcounter", roundCounter);
-            //update.putArray("update", message.body["update"]);
+            update.putArray("update", new JsonArray(message.body["update"]));
             participants.each {vertx.eventBus.send(it.get("name")+".nextround", update)}
             playNameToCommand.clear()
         })
