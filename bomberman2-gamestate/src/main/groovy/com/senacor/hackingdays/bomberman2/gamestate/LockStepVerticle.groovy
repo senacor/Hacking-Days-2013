@@ -11,11 +11,15 @@ import org.vertx.java.core.json.JsonObject
 class LockStepVerticle extends Verticle{
     @Override
     Object start() {
+
         def playNameToCommand = [:]
         def gameId = container.config["gameId"]
         def roundCounter = 1
         def participants = container.config["participants"]
         def captureState = [:]
+
+        container.logger.info("started LockStepVerticle for game "+gameId);
+
         vertx.eventBus.registerHandler("game."+gameId, { message ->
             playNameToCommand.put(message.body["player"], message.body["command"])
 
@@ -30,13 +34,22 @@ class LockStepVerticle extends Verticle{
             if(playNameToCommand.size()==participants.size()){
                 vertx.eventBus.send("game.capture.state", captureState)
                 roundCounter++
-                playNameToCommand.clear()
                 JsonObject nextroundMessage = new JsonObject()
                 nextroundMessage.putArray("commands", new JsonArray(playNameToCommand))
                 nextroundMessage.putNumber("roundid", roundCounter)
+                vertx.eventBus.send("game.update", nextroundMessage);
                 participants.each {vertx.eventBus.send(it.get("name")+".nextround", roundCounter)}
                 playNameToCommand.clear()
             }
+        })
+
+        vertx.eventBus.registerHandler("game."+gameId+".join", { message ->
+             def player =  message.body["player"];
+             participants.add(player);
+
+            vertx.eventBus.send(player.get("name")+".start", gameId)
+
+            container.logger.info(player.get("name")+" joined game "+gameId);
         })
     }
 }

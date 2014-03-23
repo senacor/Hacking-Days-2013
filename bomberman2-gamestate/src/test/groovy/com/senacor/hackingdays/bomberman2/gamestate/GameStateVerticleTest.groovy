@@ -20,8 +20,12 @@ class GameStateVerticleTest extends TestVerticle{
             @Override
             void handle(AsyncResult<String> event) {
                 JsonArray participants = new JsonArray()
-                participants.add("nr1")
-                participants.add("nr2")
+                def player1 = new JsonObject()
+                player1.putString("name", "nr1");
+                participants.add(player1)
+                def player2 = new JsonObject()
+                player2.putString("name", "nr2");
+                participants.add(player2);
                 JsonObject msg = new JsonObject()
                 vertx.eventBus().registerHandler("nr1.start", new Handler<Object>(){
                     @Override
@@ -36,13 +40,53 @@ class GameStateVerticleTest extends TestVerticle{
     }
 
     @Test
+    public void testStartGameAndJoinSecondPlayer() {
+        container.deployVerticle("groovy:"+GameStarterVerticle.class.getName(), new Handler<AsyncResult<java.lang.String>>() {
+            @Override
+            void handle(AsyncResult<String> event) {
+                JsonArray participants = new JsonArray()
+                def player1 = new JsonObject()
+                player1.putString("name", "nr1");
+                participants.add(player1)
+
+                JsonObject msg = new JsonObject()
+
+                vertx.eventBus().registerHandler("nr1.start", new Handler<Object>(){
+                    @Override
+                    void handle(Object event2) {
+                        JsonObject joinMsg = new JsonObject()
+                        def player2 = new JsonObject()
+                        player2.putString("name", "nr2");
+                        joinMsg.putObject("player", player2)
+
+                        GameStateVerticleTest.this.vertx.eventBus().registerHandler("nr2.start", new Handler<Object>(){
+                            @Override
+                            void handle(Object event3) {
+                                testComplete();
+                            }
+                        })
+                        GameStateVerticleTest.this.vertx.eventBus().send("game.1.join", joinMsg);
+                    }
+                })
+                msg.putArray("participants", participants)
+                vertx.eventBus().send("game.start", msg)
+
+            }
+        });
+    }
+
+    @Test
     public void testStartGameAndSendCommands() {
         container.deployVerticle("groovy:"+GameStarterVerticle.class.getName(), new Handler<AsyncResult<java.lang.String>>() {
             @Override
             void handle(AsyncResult<String> event) {
                 JsonArray participants = new JsonArray()
-                participants.add("nr1")
-                participants.add("nr2")
+                def player1 = new JsonObject()
+                player1.putString("name", "nr1");
+                participants.add(player1)
+                def player2 = new JsonObject()
+                player2.putString("name", "nr2");
+                participants.add(player2);
                 JsonObject msg = new JsonObject()
 
                 vertx.eventBus().registerHandler("nr1.start", new Handler<Object>(){
