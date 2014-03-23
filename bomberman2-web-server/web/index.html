@@ -14,8 +14,18 @@
         <script type="text/javascript" src="static/js/libs/vertx/vertxbus.js"></script>
         <script type="text/javascript" src="static/js/libs/jquery/jquery.min.js"></script>
         <script>
-           var bus = new vertx.EventBus("http://localhost:8080/eventbus");
+            
+            function getServer() {
+                if (location.protocol === "file:") {
+                    return "http://localhost:8080";
+                } else {
+                    return location.protocol + "//" + location.host + (location.port ? ":" + location.port : "");
+                }
+            }
+
            var messages = [];
+
+           var bus = new vertx.EventBus(getServer()+"eventbus");
            var playerName = Math.floor((Math.random()*100000)+1) + "";
            var initInfo = new InitInfo([playerName], 11, 11);
            var joinInfo = new JoinInfo(playerName, 1);
