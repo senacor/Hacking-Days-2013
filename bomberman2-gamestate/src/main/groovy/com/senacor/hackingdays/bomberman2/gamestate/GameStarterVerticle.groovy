@@ -19,9 +19,12 @@ class GameStarterVerticle extends Verticle{
             gameIdCounter++
             //println(LockStepVerticle.class.getCanonicalName())
             println message.body
-            Verticle deployable = container.deployVerticle("groovy:" + LockStepVerticle.class.getCanonicalName(),
+            Verticle deployable = container.deployVerticle("groovy:src/main/groovy/com/senacor/hackingdays/bomberman2/gamestate/LockStepVerticle",
                     ["participants" : message.body["participants"], "gameId" : gameIdCounter], {doneHandler ->
-                            message.body["participants"].each {vertx.eventBus.send(it.get("name")+".start", gameIdCounter)}
+                            message.body["participants"].each {
+                                vertx.eventBus.send(it.get("name")+".start", gameIdCounter)
+                            }
+                            vertx.eventBus.send("dashboard.start", gameIdCounter)
                         })
             gameIdToVerticleMap.put(gameIdCounter, deployable)
         });

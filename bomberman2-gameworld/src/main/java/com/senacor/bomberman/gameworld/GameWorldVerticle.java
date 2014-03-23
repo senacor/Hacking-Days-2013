@@ -119,6 +119,7 @@ public class GameWorldVerticle extends Verticle {
             @Override
             public void handle(Message<JsonObject> message) {
                 container.logger().info(">>> game update");
+                container.logger().info(message.body());
 
                  currentTimeSlice++;
                 //Zeitabschnitt aus und Prüfe
@@ -148,7 +149,7 @@ public class GameWorldVerticle extends Verticle {
                 //für alle Bewegungsupdates
                 for(Object playerMovement: playerMovements) {
                     String playerName = ((JsonObject)playerMovement).getString("player");
-                    String direction = ((JsonObject)playerMovement).getString("command");
+                    String direction = ((JsonObject)playerMovement).getString("direction");
                     Spieler player = findPlayerByName(playerName);
                     if(player != null) {
                         bewegungSpieler(player, direction);
@@ -276,10 +277,11 @@ public class GameWorldVerticle extends Verticle {
                 return;
             }
 
+            player.setPosition(newPosition);
             // Timer  einstellen (halbe Bewegungszeit): Positionswechsel
-            player.setTimeSliceReachingNextField(1);
+            player.setTimeSliceReachingNextField(0);
             // Timer einstellen (volle Bewegungszeit): Bewegung abgeschlossen
-            player.setTimeSliceFinishingMovement(1);
+            player.setTimeSliceFinishingMovement(0);
             // Event Positionswechsel
             player.setTargetPosition(newPosition);
             player.setDirection(direction);
