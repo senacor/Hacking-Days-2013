@@ -32,6 +32,8 @@ img.src = "static/img/bomberman_2.gif";
 wall.src = "static/img/wall.png";
 wood.src = "static/img/wood.png";
 
+var players;
+
 function init(reply) {
     canvas = document.getElementById("canvas");
     ctx = canvas.getContext('2d');
@@ -58,7 +60,7 @@ function init(reply) {
         }
     }
 
-    var players = reply.player;
+    players = reply.player;
     x *= players[0].position.x;
     y *= players[0].position.y;
 
@@ -81,6 +83,19 @@ function draw(){
     img.sprite.render(ctx);
     img.sprite.done = true;
     drawsSinceLastUpdate += 1;
+
+    // draw a second player
+    if(players.length > 1){
+        var imgP2 = new Image();
+        imgP2.src = "static/img/bomberman_2.gif";
+        imgP2.sprite = createSprite(1, [0], true);
+        var p2_x = 64 * players[1].position.x;
+        var p2_y = 64 * players[1].position.y;
+        imgP2.sprite.update(1);
+        imgP2.sprite.canvasPos = [p2_x, p2_y];
+        imgP2.sprite.render(ctx);
+        imgP2.sprite.done = true;
+    }
 
     if(gameStarted && (drawsSinceLastUpdate === drawsRequiredForUpdate + 1)){
         bus.send("game." + gameId, new PlayerState(playerName, lastKey, bombSet));
